@@ -1,0 +1,71 @@
+project_name: hallmark-mlx
+
+paths:
+  raw_trace_path: ../data/raw/traces.jsonl
+  processed_dir: ../data/processed
+  artifacts_dir: ../artifacts
+  predictions_path: ../artifacts/predictions.jsonl
+
+model:
+  backend: warm_start
+  base_model: prism-ml/Bonsai-8B-mlx-1bit
+  adapter_path: ../artifacts/adapters/latest
+  max_tokens: 768
+  temperature: 0.0
+  system_prompt_version: v0
+
+tools:
+  bibtex_updater:
+    enabled: true
+    command: bibtex-check
+    timeout_seconds: 30.0
+  crossref:
+    enabled: true
+    timeout_seconds: 15.0
+    rows: 5
+  openalex:
+    enabled: true
+    timeout_seconds: 15.0
+    rows: 5
+  semantic_scholar:
+    enabled: true
+    timeout_seconds: 15.0
+    rows: 5
+
+data:
+  valid_ratio: 0.1
+  test_ratio: 0.1
+  seed: 42
+  group_by: citation_family
+  private_holdout_tag: private_holdout
+
+training:
+  enabled: true
+  output_dir: ../artifacts/train
+  fine_tune_type: lora
+  optimizer: adamw
+  mask_prompt: true
+  num_layers: 16
+  learning_rate: 0.0001
+  batch_size: 1
+  num_iterations: 300
+  val_batches: 10
+  max_seq_length: 2048
+  grad_accumulation_steps: 4
+  save_every: 50
+  eval_every: 25
+  report_every: 10
+  test_batches: -1
+  grad_checkpoint: true
+  seed: 42
+
+eval:
+  split_name: dev_public
+  gold_path: ../data/hallmark/dev_public.jsonl
+  output_path: ../artifacts/eval/metrics.json
+
+weco:
+  enabled: false
+  command: weco
+  objective_name: f1_hallucinated
+  experiment_dir: ../artifacts/weco

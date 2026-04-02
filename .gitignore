@@ -1,0 +1,17 @@
+.DS_Store
+.cache.fact_checker.db
+.coverage
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.venv/
+__pycache__/
+artifacts/
+build/
+dist/
+htmlcov/
+*.egg-info/
+*.pyc
+*.pyo
+*.tmp
+*.swp

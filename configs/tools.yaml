@@ -1,0 +1,19 @@
+project_name: hallmark-mlx
+
+tools:
+  bibtex_updater:
+    enabled: true
+    command: bibtex-check
+    timeout_seconds: 30.0
+  crossref:
+    enabled: true
+    timeout_seconds: 15.0
+    rows: 5
+  openalex:
+    enabled: true
+    timeout_seconds: 15.0
+    rows: 5
+  semantic_scholar:
+    enabled: true
+    timeout_seconds: 15.0
+    rows: 5

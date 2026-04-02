@@ -1,0 +1,41 @@
+project_name: hallmark-mlx
+
+paths:
+  raw_trace_path: ../data/raw/traces.jsonl
+  processed_dir: ../data/processed
+  artifacts_dir: ../artifacts
+  predictions_path: ../artifacts/predictions.jsonl
+
+model:
+  backend: mlx
+  base_model: Qwen/Qwen2.5-3B-Instruct
+  adapter_path: ../artifacts/adapters/qwen25_3b_lora
+  max_tokens: 768
+  temperature: 0.0
+  system_prompt_version: v0
+
+training:
+  enabled: true
+  output_dir: ../artifacts/train_qwen_3b
+  fine_tune_type: lora
+  optimizer: adamw
+  mask_prompt: true
+  num_layers: 16
+  learning_rate: 0.0001
+  batch_size: 1
+  num_iterations: 400
+  val_batches: 20
+  max_seq_length: 2048
+  grad_accumulation_steps: 8
+  save_every: 50
+  eval_every: 25
+  report_every: 10
+  test_batches: -1
+  grad_checkpoint: true
+  seed: 42
+
+weco:
+  enabled: true
+  command: weco
+  objective_name: f1_hallucinated
+  experiment_dir: ../artifacts/weco
