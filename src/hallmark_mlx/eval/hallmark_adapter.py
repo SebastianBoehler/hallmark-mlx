@@ -12,9 +12,13 @@ from hallmark_mlx.utils.jsonl import write_jsonl
 def hallmark_label_from_verdict(verdict: VerificationVerdict) -> HallmarkLabel:
     """Map local verdicts onto HALLMARK labels."""
 
-    if verdict in {VerificationVerdict.VERIFIED, VerificationVerdict.CORRECTED}:
+    if verdict == VerificationVerdict.VERIFIED:
         return HallmarkLabel.VALID
-    if verdict in {VerificationVerdict.HALLUCINATED, VerificationVerdict.UNSUPPORTED}:
+    if verdict in {
+        VerificationVerdict.CORRECTED,
+        VerificationVerdict.HALLUCINATED,
+        VerificationVerdict.UNSUPPORTED,
+    }:
         return HallmarkLabel.HALLUCINATED
     return HallmarkLabel.UNCERTAIN
 

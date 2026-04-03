@@ -11,6 +11,7 @@ from hallmark_mlx.inference.policy_runner import PolicyRunner
 from hallmark_mlx.inference.tool_executor import ToolExecutor
 from hallmark_mlx.types import (
     EvidenceStrength,
+    FinalizationMode,
     InputType,
     ToolName,
     VerificationAction,
@@ -60,6 +61,36 @@ class FakeToolExecutor(ToolExecutor):
         ]
 
 
+class InteractiveFakeModel:
+    def run_with_tools(
+        self,
+        verification_input: VerificationInput,
+        tool_executor: ToolExecutor,
+    ) -> VerificationTrace:
+        result = tool_executor.execute_many(
+            [
+                ToolInvocation(
+                    tool=ToolName.CROSSREF,
+                    action="search_works",
+                    arguments={"query": verification_input.raw_input},
+                )
+            ]
+        )
+        return VerificationTrace(
+            input=verification_input,
+            parsed_fields=ParsedBibliographicFields(title="Attention Is All You Need"),
+            next_action=VerificationAction.FINALIZE,
+            tool_calls=[
+                ToolInvocation(
+                    tool=ToolName.CROSSREF,
+                    action="search_works",
+                    arguments={"query": verification_input.raw_input},
+                )
+            ],
+            tool_results=result,
+        )
+
+
 def test_policy_runner_finalizes_trace() -> None:
     runner = PolicyRunner(model=FakeModel(), tool_executor=FakeToolExecutor())
     trace = runner.run(
@@ -72,3 +103,54 @@ def test_policy_runner_finalizes_trace() -> None:
 
     assert trace.final_decision is not None
     assert trace.final_decision.verdict == VerificationVerdict.VERIFIED
+
+
+def test_policy_runner_uses_interactive_model_when_available() -> None:
+    runner = PolicyRunner(
+        model=InteractiveFakeModel(),
+        tool_executor=FakeToolExecutor(),
+        finalization_mode=FinalizationMode.GENERATIVE,
+    )
+    trace = runner.run(
+        VerificationInput(
+            record_id="trace-2",
+            input_type=InputType.RAW_CITATION_STRING,
+            raw_input="Attention Is All You Need",
+        ),
+    )
+
+    assert len(trace.tool_results) == 1
+    assert trace.final_decision is None
+
+
+def test_policy_runner_can_force_deterministic_finalization() -> None:
+    runner = PolicyRunner(
+        model=InteractiveFakeModel(),
+        tool_executor=FakeToolExecutor(),
+        finalization_mode=FinalizationMode.DETERMINISTIC,
+    )
+    trace = runner.run(
+        VerificationInput(
+            record_id="trace-3",
+            input_type=InputType.RAW_CITATION_STRING,
+            raw_input="Attention Is All You Need",
+        ),
+    )
+
+    assert trace.final_decision is not None
+    assert trace.final_decision.verdict == VerificationVerdict.VERIFIED
+
+
+def test_tool_executor_returns_failed_summary_for_invalid_arguments() -> None:
+    executor = ToolExecutor(ToolsConfig())
+
+    result = executor.execute(
+        ToolInvocation(
+            tool=ToolName.CROSSREF,
+            action="search_works",
+            arguments={},
+        ),
+    )
+
+    assert result.ok is False
+    assert "query" in (result.notes or "")

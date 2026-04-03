@@ -10,3 +10,4 @@ eval:
   split_name: dev_public
   gold_path: ../data/hallmark/dev_public.jsonl
   output_path: ../artifacts/eval/hallmark_metrics.json
+  tool_call_budgets: [1, 2, 4, 8]

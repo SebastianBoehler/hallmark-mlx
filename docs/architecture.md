@@ -23,6 +23,8 @@ The tool layer is intentionally externalized. It currently contains wrappers for
 - BibTeX Updater,
 - Crossref,
 - OpenAlex,
+- DBLP,
+- ACL Anthology,
 - Semantic Scholar.
 
 The policy asks for tool calls. The tool executor normalizes raw outputs into `ToolResultSummary` objects. This lets the model learn a stable interface even if individual upstream APIs change.
@@ -48,7 +50,7 @@ Real HALLMARK evaluation should use the exact benchmark-provided `bibtex_key` va
 
 ## MLX Boundary
 
-MLX-specific logic is isolated in `training/mlx_lora.py`. That module writes a reproducibility manifest and launches `python -m mlx_lm lora ...` using the same CLI shape as the working Manim fine-tuning repo. Real runs still depend on the installed `mlx-lm` version and, for Bonsai, the compatible Prism MLX fork.
+MLX-specific logic is isolated in `training/mlx_lora.py`. That module writes a reproducibility manifest and launches `python -m mlx_lm lora ...` using the standard MLX CLI surface. Real runs still depend on the installed `mlx-lm` version and a tokenizer-compatible instruct checkpoint.
 
 ## Weco Boundary
 

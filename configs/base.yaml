@@ -8,11 +8,13 @@ paths:
 
 model:
   backend: warm_start
-  base_model: prism-ml/Bonsai-8B-mlx-1bit
+  base_model: Qwen/Qwen2.5-1.5B-Instruct
   adapter_path: ../artifacts/adapters/latest
   max_tokens: 768
   temperature: 0.0
   system_prompt_version: v0
+  finalization_mode: deterministic
+  force_bibtex_updater_first: true
 
 tools:
   bibtex_updater:
@@ -27,6 +29,13 @@ tools:
     enabled: true
     timeout_seconds: 15.0
     rows: 5
+  dblp:
+    enabled: true
+    timeout_seconds: 15.0
+    rows: 5
+  acl_anthology:
+    enabled: true
+    timeout_seconds: 15.0
   semantic_scholar:
     enabled: true
     timeout_seconds: 15.0
@@ -42,6 +51,7 @@ data:
 training:
   enabled: true
   output_dir: ../artifacts/train
+  example_format: tool_transcript_steps
   fine_tune_type: lora
   optimizer: adamw
   mask_prompt: true
@@ -50,7 +60,7 @@ training:
   batch_size: 1
   num_iterations: 300
   val_batches: 10
-  max_seq_length: 2048
+  max_seq_length: 6144
   grad_accumulation_steps: 4
   save_every: 50
   eval_every: 25
@@ -63,6 +73,7 @@ eval:
   split_name: dev_public
   gold_path: ../data/hallmark/dev_public.jsonl
   output_path: ../artifacts/eval/metrics.json
+  tool_call_budgets: [1, 2, 4, 8]
 
 weco:
   enabled: false

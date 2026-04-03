@@ -25,7 +25,7 @@ class MLXLoRATrainPlan:
 
 
 def build_mlx_command(config: AppConfig, dataset_dir: Path) -> list[str]:
-    """Build an MLX LoRA command using the working CLI shape from the Manim repo."""
+    """Build an MLX LoRA command using the standard `python -m mlx_lm lora` CLI."""
 
     train = config.training
     return [
@@ -82,6 +82,7 @@ def build_training_manifest(config: AppConfig, dataset_dir: Path, command: list[
         "dataset_dir": str(dataset_dir),
         "command": command,
         "training": {
+            "example_format": config.training.example_format.value,
             "fine_tune_type": config.training.fine_tune_type,
             "optimizer": config.training.optimizer,
             "mask_prompt": config.training.mask_prompt,
@@ -107,7 +108,11 @@ def plan_training_run(config: AppConfig) -> MLXLoRATrainPlan:
 
     output_root = ensure_dir(config.training.output_dir)
     prepared_dataset_dir = ensure_dir(output_root / "prepared_dataset")
-    prepare_training_dataset(config.paths.processed_dir, prepared_dataset_dir)
+    prepare_training_dataset(
+        config.paths.processed_dir,
+        prepared_dataset_dir,
+        example_format=config.training.example_format,
+    )
 
     ensure_dir(config.model.adapter_path.parent)
     command = build_mlx_command(config, prepared_dataset_dir)

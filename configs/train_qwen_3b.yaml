@@ -17,6 +17,7 @@ model:
 training:
   enabled: true
   output_dir: ../artifacts/train_qwen_3b
+  example_format: tool_transcript_steps
   fine_tune_type: lora
   optimizer: adamw
   mask_prompt: true
@@ -25,7 +26,7 @@ training:
   batch_size: 1
   num_iterations: 400
   val_batches: 20
-  max_seq_length: 2048
+  max_seq_length: 6144
   grad_accumulation_steps: 8
   save_every: 50
   eval_every: 25

@@ -13,6 +13,13 @@ tools:
     enabled: true
     timeout_seconds: 15.0
     rows: 5
+  dblp:
+    enabled: true
+    timeout_seconds: 15.0
+    rows: 5
+  acl_anthology:
+    enabled: true
+    timeout_seconds: 15.0
   semantic_scholar:
     enabled: true
     timeout_seconds: 15.0

@@ -37,6 +37,8 @@ class VerificationAction(str, Enum):
     QUERY_BIBTEX_UPDATER = "query_bibtex_updater"
     QUERY_CROSSREF = "query_crossref"
     QUERY_OPENALEX = "query_openalex"
+    QUERY_DBLP = "query_dblp"
+    QUERY_ACL_ANTHOLOGY = "query_acl_anthology"
     QUERY_SEMANTIC_SCHOLAR = "query_semantic_scholar"
     RANK_CANDIDATES = "rank_candidates"
     FINALIZE = "finalize"
@@ -49,6 +51,8 @@ class ToolName(str, Enum):
     BIBTEX_UPDATER = "bibtex_updater"
     CROSSREF = "crossref"
     OPENALEX = "openalex"
+    DBLP = "dblp"
+    ACL_ANTHOLOGY = "acl_anthology"
     SEMANTIC_SCHOLAR = "semantic_scholar"
 
 
@@ -76,6 +80,21 @@ class ModelBackend(str, Enum):
     MLX = "mlx"
     WARM_START = "warm_start"
     EXTERNAL = "external"
+
+
+class FinalizationMode(str, Enum):
+    """How the system should derive the final verification verdict."""
+
+    GENERATIVE = "generative"
+    DETERMINISTIC = "deterministic"
+
+
+class TrainingExampleFormat(str, Enum):
+    """Supported supervised fine-tuning example layouts."""
+
+    TRACE_JSON = "trace_json"
+    TOOL_TRANSCRIPT = "tool_transcript"
+    TOOL_TRANSCRIPT_STEPS = "tool_transcript_steps"
 
 
 class EvidenceStrength(str, Enum):

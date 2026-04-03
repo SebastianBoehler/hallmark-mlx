@@ -8,7 +8,7 @@ from pathlib import Path
 import yaml
 from pydantic import BaseModel, Field, model_validator
 
-from hallmark_mlx.types import ModelBackend
+from hallmark_mlx.types import FinalizationMode, ModelBackend, TrainingExampleFormat
 
 
 class PathsConfig(BaseModel):
@@ -24,11 +24,14 @@ class ModelConfig(BaseModel):
     """Policy model configuration."""
 
     backend: ModelBackend = ModelBackend.MLX
-    base_model: str = "prism-ml/Bonsai-8B-mlx-1bit"
+    base_model: str = "Qwen/Qwen2.5-1.5B-Instruct"
     adapter_path: Path = Path("artifacts/adapters/latest")
     max_tokens: int = 768
     temperature: float = 0.0
+    max_rollout_rounds: int = 6  # needs room for n_tools calls + at least 1 finalization round
     system_prompt_version: str = "v0"
+    finalization_mode: FinalizationMode = FinalizationMode.DETERMINISTIC
+    force_bibtex_updater_first: bool = True
 
 
 class ToolServiceConfig(BaseModel):
@@ -38,6 +41,7 @@ class ToolServiceConfig(BaseModel):
     timeout_seconds: float = 15.0
     rows: int = 5
     command: str | None = None
+    update_command: str | None = None  # explicit binary for update_bibtex; avoids fragile string replacement
     email: str | None = None
 
 
@@ -49,6 +53,8 @@ class ToolsConfig(BaseModel):
     )
     crossref: ToolServiceConfig = Field(default_factory=ToolServiceConfig)
     openalex: ToolServiceConfig = Field(default_factory=ToolServiceConfig)
+    dblp: ToolServiceConfig = Field(default_factory=ToolServiceConfig)
+    acl_anthology: ToolServiceConfig = Field(default_factory=ToolServiceConfig)
     semantic_scholar: ToolServiceConfig = Field(default_factory=ToolServiceConfig)
 
 
@@ -74,6 +80,7 @@ class TrainingConfig(BaseModel):
 
     enabled: bool = True
     output_dir: Path = Path("artifacts/train")
+    example_format: TrainingExampleFormat = TrainingExampleFormat.TOOL_TRANSCRIPT_STEPS
     python_executable: str = sys.executable
     fine_tune_type: str = "lora"
     optimizer: str = "adamw"
@@ -83,7 +90,7 @@ class TrainingConfig(BaseModel):
     batch_size: int = 1
     num_iterations: int = 300
     val_batches: int = 10
-    max_seq_length: int = 2048
+    max_seq_length: int = 6144
     grad_accumulation_steps: int = 4
     save_every: int = 50
     eval_every: int = 25
@@ -99,6 +106,7 @@ class EvalConfig(BaseModel):
     split_name: str = "dev_public"
     gold_path: Path = Path("data/hallmark/dev_public.jsonl")
     output_path: Path = Path("artifacts/eval/metrics.json")
+    tool_call_budgets: tuple[int, ...] = (1, 2, 4, 8)
 
 
 class WecoConfig(BaseModel):

@@ -14,12 +14,13 @@ def run_local_eval(
     gold_path: str | Path,
     *,
     output_path: str | Path | None = None,
+    tool_budgets: tuple[int, ...] = (1, 2, 4, 8),
 ) -> dict[str, float]:
     """Evaluate local predictions against gold JSONL."""
 
     prediction_rows = read_jsonl(predictions_path)
     gold_rows = read_jsonl(gold_path)
-    metrics = compute_metrics(gold_rows, prediction_rows)
+    metrics = compute_metrics(gold_rows, prediction_rows, tool_budgets=tool_budgets)
     if output_path is not None:
         write_json(output_path, metrics)
     return metrics

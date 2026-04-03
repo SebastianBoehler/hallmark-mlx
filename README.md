@@ -40,6 +40,8 @@ Bibliographic truth is not a stable latent fact stored inside a model. It is oft
 - BibTeX Updater,
 - Crossref,
 - OpenAlex,
+- DBLP,
+- ACL Anthology,
 - Semantic Scholar,
 - local bibliography files,
 - and benchmark-provided entry identifiers.
@@ -59,7 +61,7 @@ This scaffold includes:
 - a typed Python package under `src/hallmark_mlx/`,
 - schema models for trace-based verification,
 - a small CLI for dataset building, training, inference, evaluation, and BibTeX checking,
-- wrappers for BibTeX Updater, Crossref, OpenAlex, and Semantic Scholar,
+- wrappers for BibTeX Updater, Crossref, OpenAlex, DBLP, ACL Anthology, and Semantic Scholar,
 - contamination-aware dataset utilities,
 - HALLMARK-style prediction serialization,
 - placeholder MLX LoRA planning hooks,
@@ -99,12 +101,6 @@ hallmark-mlx/
 uv sync --extra dev --extra mlx
 ```
 
-For Prism ML's Bonsai 8B MLX 1-bit checkpoint on Apple Silicon, install the Bonsai-specific MLX fork as well:
-
-```bash
-uv sync --extra dev --extra mlx --extra bonsai
-```
-
 ### Minimal
 
 ```bash
@@ -113,7 +109,7 @@ python -m pip install -e ".[dev]"
 
 ### Mac Notes
 
-The repository is structured for Apple Silicon first. `scripts/setup_mac.sh` installs the basic local tooling expected for MLX-oriented experimentation. For Bonsai runs, the environment should match the Bonsai-compatible MLX stack used in the working Manim fine-tuning repo.
+The repository is structured for Apple Silicon first. `scripts/setup_mac.sh` installs the local tooling expected for MLX-oriented experimentation with Qwen checkpoints.
 
 ## Quick Start
 
@@ -135,10 +131,20 @@ hallmark-mlx check-bib references.bib --strict
 Plan or launch an MLX LoRA run:
 
 ```bash
-hallmark-mlx train --config configs/train_bonsai_8b.yaml
+hallmark-mlx train --config configs/train_qwen_1_5b.yaml
 ```
 
-The current default training config uses `prism-ml/Bonsai-8B-mlx-1bit`, matching the Bonsai family referenced in the earlier Manim MLX fine-tuning repository. The training launcher now follows the same `python -m mlx_lm lora ...` command shape as that working repo. The earlier Qwen baseline remains available in `configs/train_qwen_3b.yaml` for side-by-side comparison.
+The default training config now uses `Qwen/Qwen2.5-1.5B-Instruct`. An alternate larger baseline remains available in `configs/train_qwen_3b.yaml`.
+
+Training now defaults to `training.example_format: tool_transcript_steps`. The raw reviewed corpus still stores full chains, but the trainer explodes each full chain into stepwise supervision targets so the model sees:
+
+- user task input,
+- assistant tool call,
+- tool observation JSON,
+- further assistant tool calls if needed,
+- and a final assistant decision JSON block.
+
+The tokenizer's chat template still owns role-formatting tokens. The repository uses the model-native `<tool_call>...</tool_call>` delimiters and keeps tool observations plus final decisions as compact JSON so the protocol remains explicit without inventing unsupported pseudo-special tokens.
 
 The default inference config in `configs/base.yaml` uses a deterministic `warm_start` policy backend. This is a bootstrapping path for seed-trace generation: it parses the input heuristically, proposes tool calls, runs the tool layer, and writes a structured trace you can review and later promote into training JSONL.
 
@@ -279,14 +285,13 @@ Near-term priorities:
 
 ## Limitations
 
-- The MLX training adapter now launches the real `python -m mlx_lm lora ...` CLI, but successful Bonsai runs still depend on a Bonsai-compatible MLX environment and realistic dataset size.
+- The MLX training adapter launches the real `python -m mlx_lm lora ...` CLI, but successful runs still depend on realistic dataset size and strict protocol supervision.
 - The inference runner requires a real policy backend that emits structured traces. No synthetic fallback policy is shipped.
 - Public API wrappers are minimal and focused on normalization, not exhaustive service coverage.
 - HALLMARK compatibility is format-level in this scaffold; benchmark data ingestion and leaderboard replication remain follow-on work.
 
 ## Related Work and Dependencies
 
-- [SebastianBoehler/autoresearch_manim_finetune](https://github.com/SebastianBoehler/autoresearch_manim_finetune)
 - [rpatrik96/hallmark](https://github.com/rpatrik96/hallmark)
 - [rpatrik96/bibtexupdater](https://github.com/rpatrik96/bibtexupdater)
 - [ml-explore/mlx-lm](https://github.com/ml-explore/mlx-lm)

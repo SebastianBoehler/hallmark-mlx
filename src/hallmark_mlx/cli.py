@@ -11,6 +11,7 @@ import typer
 from hallmark_mlx.config import load_config
 from hallmark_mlx.data.build_dataset import build_trace_dataset
 from hallmark_mlx.data.schemas import VerificationInput
+from hallmark_mlx.eval.policy_rollout import evaluate_policy_rollout
 from hallmark_mlx.eval.run_eval import run_local_eval
 from hallmark_mlx.inference.bootstrap import bootstrap_trace_dataset
 from hallmark_mlx.inference.policy_runner import PolicyRunner, load_policy_model
@@ -46,7 +47,7 @@ def build_dataset_command(
 
 @app.command("train")
 def train_command(
-    config: Path = typer.Option(Path("configs/train_bonsai_8b.yaml")),
+    config: Path = typer.Option(Path("configs/train_qwen_1_5b.yaml")),
     dry_run: bool = typer.Option(False, help="Plan the run without launching MLX."),
 ) -> None:
     """Plan or launch an MLX LoRA training run."""
@@ -90,7 +91,11 @@ def infer_command(
     else:
         raise typer.BadParameter("Provide either --input-file or --raw-input.")
     model = load_policy_model(app_config.model)
-    runner = PolicyRunner(model=model, tool_executor=ToolExecutor(app_config.tools))
+    runner = PolicyRunner(
+        model=model,
+        tool_executor=ToolExecutor(app_config.tools),
+        finalization_mode=app_config.model.finalization_mode,
+    )
     trace = runner.run(verification_input)
     if output_path is not None:
         write_json(output_path, trace.model_dump(exclude_none=True))
@@ -109,7 +114,11 @@ def bootstrap_traces_command(
     configure_logging()
     app_config = load_config(config)
     model = load_policy_model(app_config.model)
-    runner = PolicyRunner(model=model, tool_executor=ToolExecutor(app_config.tools))
+    runner = PolicyRunner(
+        model=model,
+        tool_executor=ToolExecutor(app_config.tools),
+        finalization_mode=app_config.model.finalization_mode,
+    )
     target_path = bootstrap_trace_dataset(input_path, output_path, runner, limit=limit)
     typer.echo(json.dumps({"output_path": str(target_path), "limit": limit}, indent=2))
 
@@ -128,6 +137,38 @@ def eval_command(
         predictions or app_config.paths.predictions_path,
         gold or app_config.eval.gold_path,
         output_path=app_config.eval.output_path,
+        tool_budgets=app_config.eval.tool_call_budgets,
+    )
+    typer.echo(json.dumps(metrics, indent=2))
+
+
+@app.command("eval-policy")
+def eval_policy_command(
+    config: Path = typer.Option(Path("configs/train_qwen_1_5b.yaml")),
+    input_path: Path = typer.Option(..., help="Gold trace JSONL with held-out inputs and decisions."),
+    output_path: Path | None = typer.Option(None, help="Optional metrics JSON path."),
+    predictions_path: Path | None = typer.Option(None, help="Optional prediction JSONL path."),
+    traces_path: Path | None = typer.Option(None, help="Optional predicted trace JSONL path."),
+    limit: int | None = typer.Option(None, help="Optional example limit."),
+) -> None:
+    """Evaluate whether the model uses tools before finalizing decisions."""
+
+    configure_logging()
+    app_config = load_config(config)
+    model = load_policy_model(app_config.model)
+    runner = PolicyRunner(
+        model=model,
+        tool_executor=ToolExecutor(app_config.tools),
+        finalization_mode=app_config.model.finalization_mode,
+    )
+    metrics = evaluate_policy_rollout(
+        input_path,
+        runner,
+        output_metrics_path=output_path,
+        output_predictions_path=predictions_path,
+        output_traces_path=traces_path,
+        limit=limit,
+        tool_budgets=app_config.eval.tool_call_budgets,
     )
     typer.echo(json.dumps(metrics, indent=2))
 

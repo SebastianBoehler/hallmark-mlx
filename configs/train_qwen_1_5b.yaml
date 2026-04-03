@@ -8,15 +8,18 @@ paths:
 
 model:
   backend: mlx
-  base_model: prism-ml/Bonsai-8B-mlx-1bit
-  adapter_path: ../artifacts/adapters/bonsai_8b_mlx_1bit_lora
+  base_model: Qwen/Qwen2.5-1.5B-Instruct
+  adapter_path: ../artifacts/adapters/qwen25_1_5b_lora
   max_tokens: 768
   temperature: 0.0
   system_prompt_version: v0
+  finalization_mode: deterministic
+  force_bibtex_updater_first: true
 
 training:
   enabled: true
-  output_dir: ../artifacts/train_bonsai_8b
+  output_dir: ../artifacts/train_qwen_1_5b
+  example_format: tool_transcript_steps
   fine_tune_type: lora
   optimizer: adamw
   mask_prompt: true
@@ -25,7 +28,7 @@ training:
   batch_size: 1
   num_iterations: 400
   val_batches: 20
-  max_seq_length: 2048
+  max_seq_length: 6144
   grad_accumulation_steps: 8
   save_every: 50
   eval_every: 25

@@ -1,0 +1,10 @@
+{
+  "split_counts": {
+    "test": 2,
+    "train": 22,
+    "valid": 2
+  },
+  "total_records": 26,
+  "train_eval_overlap_families": [],
+  "unique_families": 20
+}
