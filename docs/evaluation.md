@@ -61,3 +61,18 @@ Every comparison should report:
 - tools enabled,
 - calibration assumptions,
 - and contamination controls.
+
+## Current Benchmark Figure
+
+The repository includes a generated comparison figure at
+`docs/figures/hallmark_baseline_comparison.png`.
+
+It separates:
+
+- a local apples-to-apples 10-example HALLMARK slice comparison between repository modes and
+  HALLMARK-provided local baselines,
+- and the official HALLMARK README baseline table on `dev_public` for full-split context.
+
+Do not mix those panels when making headline claims. The local slice is useful for debugging
+protocol behavior and tool budgets. The official `dev_public` numbers are the benchmark-wide
+reference point.

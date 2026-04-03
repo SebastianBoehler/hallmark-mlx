@@ -1,5 +1,6 @@
 .DS_Store
 .cache.fact_checker.db
+.cache.replace_preprints.db
 .coverage
 .mypy_cache/
 .pytest_cache/
