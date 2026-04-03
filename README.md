@@ -52,7 +52,7 @@ Bibliographic truth is not a stable latent fact stored inside a model. It is oft
 
 The default local training path is MLX LoRA so experiments can be run directly on Apple Silicon machines without treating the Mac as a second-class environment. The code keeps MLX-specific logic behind a modular boundary so the project can later swap in a different fine-tuning backend if needed.
 
-The repository also leaves a light extension point for Weco-style experiment optimization over prompts, configs, and adapters without making Weco a hard dependency of the initial scaffold.
+The repository also supports a repo-native Weco frontier loop for budget-aware policy optimization without making Weco a hard dependency of the initial scaffold.
 
 ## Repository Scope
 
@@ -96,20 +96,18 @@ hallmark-mlx/
 ## Installation
 
 ### Recommended
-
 ```bash
-uv sync --extra dev --extra mlx
+uv sync --extra dev --extra mlx --extra weco
 ```
 
 ### Minimal
-
 ```bash
 python -m pip install -e ".[dev]"
 ```
 
 ### Mac Notes
 
-The repository is structured for Apple Silicon first. `scripts/setup_mac.sh` installs the local tooling expected for MLX-oriented experimentation with Qwen checkpoints.
+The repository is structured for Apple Silicon first. `scripts/setup_mac.sh` installs the local tooling expected for MLX-oriented experimentation with Qwen checkpoints. Budget-aware Weco optimization is documented in `docs/weco.md`.
 
 ## Quick Start
 

@@ -127,15 +127,10 @@ def plan_training_run(config: AppConfig) -> MLXLoRATrainPlan:
             weco_stub_path,
             {
                 "objective_name": config.weco.objective_name,
-                "command": [
-                    "python",
-                    "-m",
-                    "hallmark_mlx.cli",
-                    "train",
-                    "--config",
-                    "<config-path>",
-                ],
-                "notes": "Replace this stub with a real Weco experiment spec.",
+                "runner_script": "scripts/weco_run.py",
+                "trial_source": "weco_targets/hallmark_policy_trial.py",
+                "eval_script": "scripts/weco_eval.py",
+                "notes": "Use the repo-native Weco frontier loop instead of mutating MLX train commands directly.",
             },
         )
 

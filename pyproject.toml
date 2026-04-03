@@ -30,7 +30,9 @@ dev = [
 mlx = [
   "mlx-lm[train]>=0.31.1; sys_platform == 'darwin' and platform_machine == 'arm64'",
 ]
-weco = []
+weco = [
+  "weco>=0.3.25,<0.4",
+]
 
 [project.scripts]
 hallmark-mlx = "hallmark_mlx.cli:app"

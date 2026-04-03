@@ -1,0 +1,33 @@
+{
+  "compare_count": 32,
+  "compare_label_counts": {
+    "HALLUCINATED": 16,
+    "VALID": 16
+  },
+  "search_count": 64,
+  "search_label_counts": {
+    "HALLUCINATED": 48,
+    "VALID": 16
+  },
+  "selection_strategy": {
+    "compare_buckets": {
+      "H_TIER1": 4,
+      "H_TIER2": 6,
+      "H_TIER3": 6,
+      "VALID_DOI": 8,
+      "VALID_NO_DOI": 8
+    },
+    "diversity_key": "venue for valid; hallucination_type for hallucinated",
+    "search_buckets": {
+      "H_TIER1": 8,
+      "H_TIER2": 24,
+      "H_TIER3": 16,
+      "VALID_DOI": 8,
+      "VALID_NO_DOI": 8
+    }
+  },
+  "source_commit": "e9cc5a894548e35e77eeeba466c04ea9c462fdec",
+  "source_relpath": "data/v1.0/dev_public.jsonl",
+  "source_repo_url": "https://github.com/rpatrik96/hallmark",
+  "source_split": "dev_public"
+}

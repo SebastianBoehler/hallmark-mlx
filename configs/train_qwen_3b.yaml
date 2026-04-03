@@ -38,5 +38,5 @@ training:
 weco:
   enabled: true
   command: weco
-  objective_name: f1_hallucinated
+  objective_name: frontier_score
   experiment_dir: ../artifacts/weco

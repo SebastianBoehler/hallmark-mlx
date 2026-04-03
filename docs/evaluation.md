@@ -51,7 +51,7 @@ The project is designed to compare at least:
 - prompting without tools,
 - prompting with tools,
 - MLX LoRA fine-tuning on traces,
-- and Weco-optimized prompt or adapter variants.
+- and Weco-optimized policy-frontier variants.
 
 Every comparison should report:
 
@@ -76,3 +76,5 @@ It separates:
 Do not mix those panels when making headline claims. The local slice is useful for debugging
 protocol behavior and tool budgets. The official `dev_public` numbers are the benchmark-wide
 reference point.
+
+For repo-native Weco search over the budget-aware frontier, see `docs/weco.md`.

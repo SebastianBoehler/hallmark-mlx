@@ -54,4 +54,4 @@ MLX-specific logic is isolated in `training/mlx_lora.py`. That module writes a r
 
 ## Weco Boundary
 
-Weco is treated as an optional experiment orchestrator. The current scaffold writes a small stub artifact when Weco is enabled so future optimization work can plug in without reshaping the rest of the codebase.
+Weco is treated as an optional experiment orchestrator for policy-frontier search. The editable trial lives in `weco_targets/hallmark_policy_trial.py`, the evaluation entrypoint is `scripts/weco_eval.py`, and the launcher is `scripts/weco_run.py`. The search surface is intentionally narrow: policy mode, rollout budget, stop behavior, and per-tool retrieval knobs.

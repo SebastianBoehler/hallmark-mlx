@@ -17,7 +17,7 @@ if ! command -v pipx >/dev/null 2>&1; then
 fi
 
 brew install pkg-config cmake
-uv sync --extra dev --extra mlx
+uv sync --extra dev --extra mlx --extra weco
 pipx install bibtex-updater
 
-echo "Mac setup complete. Verify the Qwen MLX stack and bibtex-updater before training."
+echo "Mac setup complete. Verify the Qwen MLX stack, weco, and bibtex-updater before training."

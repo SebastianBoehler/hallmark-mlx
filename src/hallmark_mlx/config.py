@@ -114,7 +114,7 @@ class WecoConfig(BaseModel):
 
     enabled: bool = False
     command: str = "weco"
-    objective_name: str = "f1_hallucinated"
+    objective_name: str = "frontier_score"
     experiment_dir: Path = Path("artifacts/weco")
 
 
