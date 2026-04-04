@@ -12,9 +12,9 @@ harc,upstream_published_result,521,True,0.26829268292682923,0.15492957746478872,
 verify_citations,upstream_history_partial,500,True,0.24,0.3,0.3016759776536313,0.13333333333333333,Historical upstream run; not a current full dev_public published result.
 doi_only,upstream_history_partial,500,True,0.16326530612244897,0.24,0.17525773195876287,0.18888888888888888,Historical upstream run; not a current full dev_public published result.
 always_valid,executed_here,1119,False,0.0,0.0,0.0,0.0,Generated 1119 predictions locally.
-doi_only_no_prescreening,execution_failed,0,False,,,,,Server disconnected without sending a response.
-bibtexupdater_no_prescreening,execution_failed,0,False,,,,,Timed out after 300 seconds
-harc_no_prescreening,execution_failed,0,False,,,,,Timed out after 300 seconds
+doi_only_no_prescreening,not_run,0,False,,,,,Available here but not executed in this run.
+bibtexupdater_no_prescreening,not_run,0,False,,,,,Available here but not executed in this run.
+harc_no_prescreening,not_run,0,False,,,,,Available here but not executed in this run.
 verify_citations_no_prescreening,unavailable,0,False,,,,,Missing CLI commands: verify-citations. Install the package that provides them.
 llm_openai,unavailable,0,False,,,,,Missing packages: openai. Install with: pip install openai
 llm_anthropic,unavailable,0,False,,,,,Missing packages: anthropic. Install with: pip install anthropic

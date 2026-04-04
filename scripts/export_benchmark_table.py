@@ -25,14 +25,6 @@ DEV_PUBLIC_COLUMNS = (
     "false_positive_rate",
     "notes",
 )
-COMPARE32_COLUMNS = (
-    "method",
-    "f1_hallucination",
-    "label_accuracy",
-    "tool_use_rate",
-    "completion_rate",
-    "mean_api_calls",
-)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -69,22 +61,6 @@ def _dev_public_rows(summary: dict[str, Any]) -> list[dict[str, Any]]:
                 "tier_weighted_f1": row["tier_weighted_f1"],
                 "false_positive_rate": row["false_positive_rate"],
                 "notes": row["notes"] or row["status_message"],
-            }
-        )
-    return sorted(rows, key=_sort_key, reverse=True)
-
-
-def _compare32_rows(summary: dict[str, Any]) -> list[dict[str, Any]]:
-    rows = []
-    for row in summary["compare32_rows"]:
-        rows.append(
-            {
-                "method": row["name"],
-                "f1_hallucination": row["f1_hallucination"],
-                "label_accuracy": row["label_accuracy"],
-                "tool_use_rate": row["tool_use_rate"],
-                "completion_rate": row["completion_rate"],
-                "mean_api_calls": row["mean_api_calls"],
             }
         )
     return sorted(rows, key=_sort_key, reverse=True)
@@ -128,14 +104,12 @@ def main() -> None:
     output_dir = Path(args.output_dir).resolve()
     summary = read_json(args.summary_path)
     dev_public_rows = _dev_public_rows(summary)
-    compare32_rows = _compare32_rows(summary)
 
     _write_csv(
         output_dir / "hallmark_dev_public_comparison.csv",
         dev_public_rows,
         DEV_PUBLIC_COLUMNS,
     )
-    _write_csv(output_dir / "hallmark_compare32_methods.csv", compare32_rows, COMPARE32_COLUMNS)
 
     report_lines = [
         "# HALLMARK Benchmark Comparison",
@@ -143,10 +117,6 @@ def main() -> None:
         "## dev_public",
         "",
         _markdown_table(dev_public_rows, DEV_PUBLIC_COLUMNS),
-        "",
-        "## compare32",
-        "",
-        _markdown_table(compare32_rows, COMPARE32_COLUMNS),
         "",
         "## Provenance",
         "",
@@ -173,10 +143,6 @@ def main() -> None:
     write_text(
         output_dir / "hallmark_dev_public_comparison.tex",
         _latex_table(dev_public_rows, DEV_PUBLIC_COLUMNS, "dev_public"),
-    )
-    write_text(
-        output_dir / "hallmark_compare32_methods.tex",
-        _latex_table(compare32_rows, COMPARE32_COLUMNS, "compare32"),
     )
 
     print(output_dir / "hallmark_benchmark_report.md")

@@ -33,9 +33,6 @@ ALIAS = {
     "always_valid": "Always valid",
     "venue_oracle": "Venue oracle",
     "hallmark_mlx_bibtex_first_fallback": "hallmark-mlx\ncontroller",
-    "hallmark_mlx_bibtex_first_fallback_compare32": "Controller",
-    "hallmark_mlx_qwen_round7_compare32": "Qwen round 7",
-    "hallmark_mlx_qwen_round8_compare32": "Qwen round 8",
 }
 
 STATUS_TO_X = {
@@ -113,41 +110,15 @@ def _plot_registry_status(
     ax.grid(axis="x", linestyle=":", alpha=0.4)
 
 
-def _plot_compare32(ax: plt.Axes, rows: list[dict[str, object]]) -> None:
-    labels = [_label(str(row["name"])) for row in rows]
-    y = np.arange(len(rows))
-    height = 0.22
-    metric_specs = (
-        ("f1_hallucination", "F1", "#1f77b4"),
-        ("tool_use_rate", "Tool use", "#ff7f0e"),
-        ("completion_rate", "Completion", "#2ca02c"),
-    )
-    for offset, (key, legend, color) in zip(
-        np.array([-height, 0.0, height]),
-        metric_specs,
-        strict=True,
-    ):
-        values = [float(row.get(key) or 0.0) for row in rows]
-        ax.barh(y + offset, values, height=height, color=color, label=legend)
-    ax.set_yticks(y)
-    ax.set_yticklabels(labels)
-    ax.invert_yaxis()
-    ax.set_xlim(0.0, 1.05)
-    ax.set_xlabel("Score / rate")
-    ax.set_title("hallmark-mlx Compare32")
-    ax.grid(axis="x", linestyle=":", alpha=0.4)
-    ax.legend(loc="lower right", frameon=False)
-
-
 def main() -> None:
     args = build_parser().parse_args()
     summary = read_json(args.summary_path)
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-    plt.rcParams.update(bundles.icml2024(column="full", nrows=3, ncols=1, usetex=False))
-    plt.rcParams.update(figsizes.icml2024_full(nrows=3, ncols=1))
-    figure, axes = plt.subplots(3, 1)
-    figure.set_size_inches(8.0, 13.0)
+    plt.rcParams.update(bundles.icml2024(column="full", nrows=2, ncols=1, usetex=False))
+    plt.rcParams.update(figsizes.icml2024_full(nrows=2, ncols=1))
+    figure, axes = plt.subplots(2, 1)
+    figure.set_size_inches(8.0, 9.0)
 
     _plot_dev_public(axes[0], list(summary["dev_public_rows"]))
     _plot_registry_status(
@@ -155,7 +126,6 @@ def main() -> None:
         list(summary["registry_rows"]),
         list(summary["dev_public_rows"]),
     )
-    _plot_compare32(axes[2], list(summary["compare32_rows"]))
 
     figure.tight_layout(h_pad=2.0)
 

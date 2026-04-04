@@ -258,6 +258,19 @@ The repository is meant to support side-by-side comparisons between:
 - MLX LoRA fine-tuning on trace data,
 - and later Weco-guided prompt or adapter optimization.
 
+## Benchmark Snapshot
+
+The public-facing benchmark artifacts in this repository use official HALLMARK splits only.
+Internal Weco model-selection splits remain in the codebase for optimization, but they are
+not presented as benchmark results.
+
+The current official benchmark artifacts are tracked in:
+
+- `docs/reports/hallmark_submission_readiness.md` for the public leaderboard snapshot
+- `docs/reports/hallmark_official_splits.md` for the official split-by-split report
+
+![HALLMARK benchmark comparison](docs/figures/hallmark_submission_leaderboard.png)
+
 That comparison loop is intentionally explicit so benchmark gains can be traced to grounded tool use rather than memorized bibliographic answers.
 
 ## Scientific Rigor

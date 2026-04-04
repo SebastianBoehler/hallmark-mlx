@@ -17,9 +17,9 @@
 | verify_citations | upstream_history_partial | 500 | True | 0.240 | 0.300 | 0.302 | 0.133 | Historical upstream run; not a current full dev_public published result. |
 | doi_only | upstream_history_partial | 500 | True | 0.163 | 0.240 | 0.175 | 0.189 | Historical upstream run; not a current full dev_public published result. |
 | always_valid | executed_here | 1119 | False | 0.000 | 0.000 | 0.000 | 0.000 | Generated 1119 predictions locally. |
-| doi_only_no_prescreening | execution_failed | 0 | False | - | - | - | - | Server disconnected without sending a response. |
-| bibtexupdater_no_prescreening | execution_failed | 0 | False | - | - | - | - | Timed out after 300 seconds |
-| harc_no_prescreening | execution_failed | 0 | False | - | - | - | - | Timed out after 300 seconds |
+| doi_only_no_prescreening | not_run | 0 | False | - | - | - | - | Available here but not executed in this run. |
+| bibtexupdater_no_prescreening | not_run | 0 | False | - | - | - | - | Available here but not executed in this run. |
+| harc_no_prescreening | not_run | 0 | False | - | - | - | - | Available here but not executed in this run. |
 | verify_citations_no_prescreening | unavailable | 0 | False | - | - | - | - | Missing CLI commands: verify-citations. Install the package that provides them. |
 | llm_openai | unavailable | 0 | False | - | - | - | - | Missing packages: openai. Install with: pip install openai |
 | llm_anthropic | unavailable | 0 | False | - | - | - | - | Missing packages: anthropic. Install with: pip install anthropic |
@@ -28,14 +28,6 @@
 | llm_openrouter_qwen | unavailable | 0 | False | - | - | - | - | Missing packages: openai. Install with: pip install openai |
 | llm_openrouter_mistral | unavailable | 0 | False | - | - | - | - | Missing packages: openai. Install with: pip install openai |
 | llm_openrouter_gemini_flash | unavailable | 0 | False | - | - | - | - | Missing packages: openai. Install with: pip install openai |
-
-## compare32
-
-| method | f1_hallucination | label_accuracy | tool_use_rate | completion_rate | mean_api_calls |
-| --- | --- | --- | --- | --- | --- |
-| hallmark_mlx_bibtex_first_fallback_compare32 | 0.970 | 0.969 | 1.000 | 1.000 | 1.812 |
-| hallmark_mlx_qwen_round7_compare32 | 0.914 | 0.906 | 1.000 | 1.000 | 1.000 |
-| hallmark_mlx_qwen_round8_compare32 | 0.865 | 0.844 | 1.000 | 1.000 | 1.000 |
 
 ## Provenance
 

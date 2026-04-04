@@ -70,9 +70,9 @@ The evaluator fixes the frontier budgets to `(1, 2, 4, 8)` inside the Weco eval 
 - eval entrypoint: `scripts/weco_eval.py`
 - train eval entrypoint: `scripts/weco_train_eval.py`
 - launcher: `scripts/weco_run.py`
-- tracked search split: `data/weco/hallmark_dev_search64_gold_traces.jsonl`
-- tracked comparison split: `data/weco/hallmark_dev_compare32_gold_traces.jsonl`
-- tracked split manifest: `data/weco/hallmark_dev_search_manifest.json`
+- internal model-selection search split: `data/weco/hallmark_dev_search64_gold_traces.jsonl`
+- internal model-selection holdout split: `data/weco/hallmark_dev_compare32_gold_traces.jsonl`
+- internal split manifest: `data/weco/hallmark_dev_search_manifest.json`
 
 ## Usage
 
@@ -88,8 +88,12 @@ Run a local trial evaluation without Weco mutating anything:
 python scripts/weco_eval.py --source weco_targets/hallmark_policy_trial.py
 ```
 
-The default trial searches on the 64-example tracked search split. Keep the 32-example
-comparison split out of the Weco loop and use it only for post-search evaluation.
+The default trial searches on the 64-example internal model-selection split. Keep the
+32-example internal holdout split out of the Weco loop and use it only for post-search
+evaluation.
+
+These internal splits are only for Weco and model selection. Benchmark reporting should use
+official HALLMARK splits such as `dev_public`, `test_public`, and `stress_test`.
 
 Print the exact Weco command that will be used:
 

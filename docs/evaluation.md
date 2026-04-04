@@ -37,7 +37,7 @@ For real HALLMARK runs, do not synthesize `bibtex_key` values. Use the exact key
 
 ## 3. Resumable Official Runs
 
-Full official `dev_public` runs are expensive because the controller may invoke external
+Full official HALLMARK runs are expensive because the controller may invoke external
 verification CLIs per entry. Use the dedicated runner:
 
 ```bash
@@ -88,17 +88,19 @@ Every comparison should report:
 
 ## Current Benchmark Figure
 
-The repository includes a generated comparison figure at
-`docs/figures/hallmark_baseline_comparison.png`.
+The repository includes generated official-split comparison artifacts at:
 
-It separates:
+- `docs/figures/hallmark_official_splits.png`
+- `docs/reports/hallmark_official_splits.md`
 
-- a local apples-to-apples 10-example HALLMARK slice comparison between repository modes and
-  HALLMARK-provided local baselines,
-- and the official HALLMARK README baseline table on `dev_public` for full-split context.
+These use official HALLMARK splits only:
 
-Do not mix those panels when making headline claims. The local slice is useful for debugging
-protocol behavior and tool budgets. The official `dev_public` numbers are the benchmark-wide
-reference point.
+- `dev_public`
+- `test_public`
+- `stress_test`
+
+Do not mix internal model-selection slices with official benchmark claims. Internal slices are
+useful for debugging protocol behavior and tool budgets. Official splits such as `dev_public`,
+`test_public`, and `stress_test` are the benchmark-wide reference points.
 
 For repo-native Weco search over the budget-aware frontier, see `docs/weco.md`.

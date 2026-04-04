@@ -1,4 +1,0 @@
-method,f1_hallucination,label_accuracy,tool_use_rate,completion_rate,mean_api_calls
-hallmark_mlx_bibtex_first_fallback_compare32,0.9696969696969697,0.96875,1.0,1.0,1.8125
-hallmark_mlx_qwen_round7_compare32,0.9142857142857143,0.90625,1.0,1.0,1.0
-hallmark_mlx_qwen_round8_compare32,0.8648648648648648,0.84375,1.0,1.0,1.0

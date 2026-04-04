@@ -15,7 +15,6 @@ from hallmark_mlx.eval.compare_rows import (
 from hallmark_mlx.eval.official_compare import evaluate_runner_on_entries
 from hallmark_mlx.eval.policy_modes import build_policy_runner
 from hallmark_mlx.eval.timeouts import run_with_timeout
-from hallmark_mlx.eval.tracked_compare import run_compare32_row
 from hallmark_mlx.eval.upstream_hallmark import (
     list_registry_rows,
     load_entries,
@@ -29,7 +28,6 @@ from hallmark_mlx.utils.io import read_json, write_json
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_UPSTREAM_ROOT = Path("/tmp/hallmark-upstream")
 DEFAULT_OUTPUT_DIR = ROOT / "artifacts" / "hallmark_baseline_compare"
-COMPARE32_GOLD_PATH = ROOT / "data" / "weco" / "hallmark_dev_compare32_gold_traces.jsonl"
 FAST_LOCAL_BASELINES = (
     "doi_presence_heuristic",
     "title_oracle",
@@ -42,18 +40,6 @@ EXPENSIVE_LOCAL_BASELINES = (
     "doi_only_no_prescreening",
     "bibtexupdater_no_prescreening",
     "harc_no_prescreening",
-)
-FINETUNED_MODELS = (
-    (
-        "hallmark_mlx_qwen_round7_compare32",
-        "Qwen 1.5B LoRA round 7",
-        ROOT / "artifacts" / "adapters" / "qwen25_1_5b_round7",
-    ),
-    (
-        "hallmark_mlx_qwen_round8_compare32",
-        "Qwen 1.5B LoRA round 8",
-        ROOT / "artifacts" / "adapters" / "qwen25_1_5b_round8",
-    ),
 )
 
 
@@ -193,36 +179,10 @@ def main() -> None:
         )
     )
 
-    compare32_rows = [
-        run_compare32_row(
-            config_path=ROOT / "configs" / "base.yaml",
-            mode_name="bibtex_first_fallback",
-            compare32_gold_path=COMPARE32_GOLD_PATH,
-            method_name="hallmark_mlx_bibtex_first_fallback_compare32",
-            description="hallmark-mlx controller with deterministic finalizer",
-            output_dir=output_dir / "hallmark_mlx_bibtex_first_fallback_compare32",
-            rerun=args.rerun,
-        )
-    ]
-    for adapter_name, description, adapter_path in FINETUNED_MODELS:
-        compare32_rows.append(
-            run_compare32_row(
-                config_path=ROOT / "configs" / "train_qwen_1_5b.yaml",
-                mode_name="policy_deterministic",
-                compare32_gold_path=COMPARE32_GOLD_PATH,
-                method_name=adapter_name,
-                description=description,
-                adapter_path=adapter_path,
-                output_dir=output_dir / adapter_name,
-                rerun=args.rerun,
-            )
-        )
-
     summary = {
         "upstream_root": str(upstream_root),
         "registry_rows": registry_rows,
         "dev_public_rows": dev_public_rows,
-        "compare32_rows": compare32_rows,
     }
     summary_path = output_dir / "summary.json"
     write_json(summary_path, summary)
