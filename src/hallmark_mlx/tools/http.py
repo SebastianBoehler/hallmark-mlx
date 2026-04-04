@@ -25,7 +25,7 @@ def fetch_text(
     *,
     timeout: float,
     user_agent: str,
-    accept: str = "text/plain",
+    accept: str = "text/plain, */*;q=0.1",
 ) -> str:
     """Fetch and decode a text response."""
 

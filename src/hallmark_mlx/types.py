@@ -39,6 +39,7 @@ class VerificationAction(str, Enum):
     QUERY_OPENALEX = "query_openalex"
     QUERY_DBLP = "query_dblp"
     QUERY_ACL_ANTHOLOGY = "query_acl_anthology"
+    QUERY_ARXIV = "query_arxiv"
     QUERY_SEMANTIC_SCHOLAR = "query_semantic_scholar"
     RANK_CANDIDATES = "rank_candidates"
     FINALIZE = "finalize"
@@ -53,6 +54,7 @@ class ToolName(str, Enum):
     OPENALEX = "openalex"
     DBLP = "dblp"
     ACL_ANTHOLOGY = "acl_anthology"
+    ARXIV = "arxiv"
     SEMANTIC_SCHOLAR = "semantic_scholar"
 
 

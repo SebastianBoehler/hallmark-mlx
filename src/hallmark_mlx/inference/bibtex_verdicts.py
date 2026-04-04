@@ -8,6 +8,8 @@ from hallmark_mlx.types import ToolName, VerificationVerdict
 _HALLUCINATED_BIBTEX_STATUSES = {
     "AUTHOR_MISMATCH",
     "DOI_NOT_FOUND",
+    "FUTURE_DATE",
+    "HALLUCINATED",
     "TITLE_MISMATCH",
     "VENUE_MISMATCH",
     "YEAR_MISMATCH",
@@ -17,7 +19,7 @@ _CORRECTABLE_BIBTEX_STATUSES = {"PARTIAL_MATCH"}
 
 def _bibtex_status(trace: VerificationTrace) -> str | None:
     for result in trace.tool_results:
-        if result.tool != ToolName.BIBTEX_UPDATER or not result.ok:
+        if result.tool != ToolName.BIBTEX_UPDATER:
             continue
         raw_status = result.raw_payload.get("status")
         if isinstance(raw_status, str) and raw_status:

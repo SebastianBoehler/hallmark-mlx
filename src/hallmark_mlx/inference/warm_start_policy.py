@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+from html import unescape
 
 from hallmark_mlx.data.schemas import (
     ParsedBibliographicFields,
@@ -33,7 +34,8 @@ def _clean_text(value: str) -> str:
 
 
 def _strip_bibtex_wrapping(value: str) -> str:
-    return value.replace("\n", " ").replace("{", "").replace("}", "").strip()
+    cleaned = value.replace("\n", " ").replace("{", "").replace("}", "").strip()
+    return unescape(cleaned)
 
 
 def _extract_doi(raw_text: str) -> str | None:

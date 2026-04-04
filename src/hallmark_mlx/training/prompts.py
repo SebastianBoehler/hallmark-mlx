@@ -177,6 +177,24 @@ def build_tool_schemas() -> list[dict[str, Any]]:
         {
             "type": "function",
             "function": {
+                "name": "arxiv.resolve_record",
+                "description": (
+                    "Resolve an arXiv paper deterministically from an arXiv ID, "
+                    "10.48550/arXiv DOI, or arxiv.org URL."
+                ),
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "arxiv_id": {"type": "string"},
+                        "doi": {"type": "string"},
+                        "url": {"type": "string"},
+                    },
+                },
+            },
+        },
+        {
+            "type": "function",
+            "function": {
                 "name": "semantic_scholar.search_papers",
                 "description": (
                     "Search Semantic Scholar papers when Crossref/OpenAlex "
@@ -199,7 +217,7 @@ def build_available_tools_prompt() -> str:
     """Describe the current tool palette."""
 
     return (
-        "Available tools: bibtex_updater, crossref, openalex, dblp, acl_anthology, "
+        "Available tools: bibtex_updater, crossref, openalex, dblp, acl_anthology, arxiv, "
         "semantic_scholar.\n"
         "Allowed tool actions and required arguments:\n"
         "- bibtex_updater.check_bibtex requires {\"bibtex\": \"...\"} or {\"path\": \"...\"}\n"
@@ -211,6 +229,8 @@ def build_available_tools_prompt() -> str:
         "- dblp.search_works requires {\"query\": \"...\", \"rows\": N}\n"
         "- acl_anthology.resolve_record requires one of "
         "{\"anthology_id\": \"...\"}, {\"doi\": \"...\"}, or {\"url\": \"...\"}\n"
+        "- arxiv.resolve_record requires one of "
+        "{\"arxiv_id\": \"...\"}, {\"doi\": \"...\"}, or {\"url\": \"...\"}\n"
         "- semantic_scholar.search_papers requires {\"query\": \"...\", \"rows\": N}\n"
         "Assistant protocol:\n"
         "- tool requests are emitted as native function calls and rendered by the tokenizer "
@@ -224,6 +244,7 @@ def build_available_tools_prompt() -> str:
         "- do not emit a final decision before a tool observation\n"
         "- use dblp for CS/ML/NLP venue disambiguation with title plus first-author queries\n"
         "- use acl_anthology.resolve_record when the DOI or URL clearly points to ACL Anthology\n"
+        "- use arxiv.resolve_record when the DOI or URL clearly points to arXiv\n"
         "- if one DOI lookup resolves the exact work, finalize instead of searching again\n"
         "- if one DOI lookup proves the cited venue/year/title is materially wrong, finalize "
         "instead of searching again\n"

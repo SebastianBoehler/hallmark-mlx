@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from hallmark_mlx.config import AppConfig
+from hallmark_mlx.inference.bibtex_first_fallback_policy import BibtexFirstFallbackPolicyModel
 from hallmark_mlx.inference.policy_runner import PolicyRunner, load_policy_model
 from hallmark_mlx.inference.tool_executor import ToolExecutor
 from hallmark_mlx.inference.warm_start_policy import WarmStartPolicyModel
@@ -25,6 +26,12 @@ def build_policy_runner(config: AppConfig, mode_name: str) -> PolicyRunner:
         )
         return PolicyRunner(
             model=load_policy_model(deterministic_config),
+            tool_executor=tool_executor,
+            finalization_mode=FinalizationMode.DETERMINISTIC,
+        )
+    if mode_name == "bibtex_first_fallback":
+        return PolicyRunner(
+            model=BibtexFirstFallbackPolicyModel(config.model),
             tool_executor=tool_executor,
             finalization_mode=FinalizationMode.DETERMINISTIC,
         )

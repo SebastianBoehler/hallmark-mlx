@@ -12,24 +12,13 @@ from hallmark_mlx.data.schemas import (
     VerificationTrace,
 )
 from hallmark_mlx.inference.bibtex_verdicts import decision_from_bibtex_status
+from hallmark_mlx.inference.metadata_match import (
+    field_mismatches,
+    metadata_match_score,
+    normalized_doi,
+)
 from hallmark_mlx.inference.warm_start_policy import parse_input
-from hallmark_mlx.types import VerificationVerdict
-
-
-def _normalize_text(value: str | None) -> str:
-    return "".join(
-        character.lower()
-        for character in (value or "")
-        if character.isalnum() or character.isspace()
-    ).strip()
-
-
-def _normalized_doi(value: str | None) -> str:
-    return (value or "").strip().lower()
-
-
-def _token_set(value: str | None) -> set[str]:
-    return {token for token in _normalize_text(value).split() if token}
+from hallmark_mlx.types import InputType, VerificationVerdict
 
 
 def _has_parsed_signal(fields: ParsedBibliographicFields) -> bool:
@@ -52,79 +41,6 @@ def _effective_fields(trace: VerificationTrace) -> ParsedBibliographicFields:
         return trace.parsed_fields
     return parse_input(trace.input)
 
-
-def _field_mismatches(
-    fields: ParsedBibliographicFields,
-    candidate: CandidateMatch,
-) -> set[str]:
-    mismatches: set[str] = set()
-    if fields.doi and candidate.doi and _normalized_doi(fields.doi) != _normalized_doi(candidate.doi):
-        mismatches.add("doi")
-    if fields.year and candidate.year and fields.year != candidate.year:
-        mismatches.add("year")
-    if fields.venue and candidate.venue:
-        parsed_venue = _normalize_text(fields.venue)
-        candidate_venue = _normalize_text(candidate.venue)
-        if parsed_venue and candidate_venue and (
-            parsed_venue not in candidate_venue and candidate_venue not in parsed_venue
-        ):
-            mismatches.add("venue")
-    if fields.title and candidate.title:
-        parsed_title = _normalize_text(fields.title)
-        candidate_title = _normalize_text(candidate.title)
-        if parsed_title and candidate_title and parsed_title != candidate_title:
-            overlap = len(_token_set(parsed_title) & _token_set(candidate_title))
-            if overlap < 3:
-                mismatches.add("title")
-    if fields.authors and candidate.authors:
-        parsed_surname = fields.authors[0].split()[-1].lower()
-        candidate_surnames = {
-            author.split()[-1].lower() for author in candidate.authors if author.split()
-        }
-        if parsed_surname not in candidate_surnames:
-            mismatches.add("authors")
-    return mismatches
-
-
-def _metadata_match_score(fields: ParsedBibliographicFields, candidate: CandidateMatch) -> float:
-    score = candidate.score * 0.15
-    parsed_title = _normalize_text(fields.title)
-    candidate_title = _normalize_text(candidate.title)
-    if parsed_title and candidate_title:
-        if parsed_title == candidate_title:
-            score += 0.6
-        else:
-            overlap = len(_token_set(parsed_title) & _token_set(candidate_title))
-            if overlap >= 3:
-                score += 0.2
-            elif overlap == 0:
-                score -= 0.4
-    if fields.year and candidate.year:
-        if fields.year == candidate.year:
-            score += 0.25
-        elif abs(fields.year - candidate.year) == 1:
-            score += 0.05
-        else:
-            score -= 0.35
-    if fields.venue and candidate.venue:
-        parsed_venue = _normalize_text(fields.venue)
-        candidate_venue = _normalize_text(candidate.venue)
-        if parsed_venue and candidate_venue and (
-            parsed_venue in candidate_venue or candidate_venue in parsed_venue
-        ):
-            score += 0.2
-        else:
-            score -= 0.1
-    if fields.authors and candidate.authors:
-        parsed_surname = fields.authors[0].split()[-1].lower()
-        candidate_surnames = {
-            author.split()[-1].lower() for author in candidate.authors if author.split()
-        }
-        if parsed_surname in candidate_surnames:
-            score += 0.25
-        else:
-            score -= 0.2
-    return min(score, 1.5)
 
 
 def finalize_trace(trace: VerificationTrace, *, force: bool = False) -> VerificationTrace:
@@ -164,14 +80,29 @@ def finalize_trace(trace: VerificationTrace, *, force: bool = False) -> Verifica
 
     ranked_candidates = sorted(
         candidates,
-        key=lambda candidate: _metadata_match_score(fields, candidate),
+        key=lambda candidate: metadata_match_score(
+            fields,
+            candidate,
+            require_complete_authors=(
+                trace.input.input_type == InputType.BIBTEX_ENTRY and bool(fields.doi)
+            ),
+        ),
         reverse=True,
     )
     candidate_ranking = CandidateRanking(candidates=ranked_candidates, preferred_index=0)
     doi_votes = Counter(candidate.doi.lower() for candidate in ranked_candidates if candidate.doi)
     top_candidate = ranked_candidates[0]
-    mismatches = _field_mismatches(fields, top_candidate)
-    top_match_score = _metadata_match_score(fields, top_candidate)
+    require_complete_authors = trace.input.input_type == InputType.BIBTEX_ENTRY and bool(fields.doi)
+    mismatches = field_mismatches(
+        fields,
+        top_candidate,
+        require_complete_authors=require_complete_authors,
+    )
+    top_match_score = metadata_match_score(
+        fields,
+        top_candidate,
+        require_complete_authors=require_complete_authors,
+    )
 
     if doi_votes:
         preferred_doi, support_count = doi_votes.most_common(1)[0]
@@ -182,7 +113,11 @@ def finalize_trace(trace: VerificationTrace, *, force: bool = False) -> Verifica
                 if candidate.doi and candidate.doi.lower() == preferred_doi
             ]
             representative = doi_candidates[0] if doi_candidates else top_candidate
-            mismatches = _field_mismatches(fields, representative)
+            mismatches = field_mismatches(
+                fields,
+                representative,
+                require_complete_authors=require_complete_authors,
+            )
             if not mismatches:
                 decision = FinalDecision(
                     verdict=VerificationVerdict.VERIFIED,
@@ -209,6 +144,34 @@ def finalize_trace(trace: VerificationTrace, *, force: bool = False) -> Verifica
                     subtest_results={"doi_resolves": True, "metadata_alignment": False},
                 )
                 candidate_ranking.rationale = "Resolved DOI contradicts the cited metadata."
+                return trace.model_copy(
+                    update={"candidate_ranking": candidate_ranking, "final_decision": decision},
+                )
+
+    if fields.doi:
+        matching_doi_candidates = [
+            candidate
+            for candidate in ranked_candidates
+            if candidate.doi and normalized_doi(candidate.doi) == normalized_doi(fields.doi)
+        ]
+        if matching_doi_candidates:
+            representative = matching_doi_candidates[0]
+            mismatches = (
+                field_mismatches(
+                    fields,
+                    representative,
+                    require_complete_authors=require_complete_authors,
+                )
+                - {"doi"}
+            )
+            if not mismatches:
+                decision = FinalDecision(
+                    verdict=VerificationVerdict.VERIFIED,
+                    confidence=0.9,
+                    rationale="An external resolver returned the cited DOI with aligned metadata.",
+                    subtest_results={"doi_resolves": True, "metadata_alignment": True},
+                )
+                candidate_ranking.rationale = "Resolved DOI record aligns with the cited entry."
                 return trace.model_copy(
                     update={"candidate_ranking": candidate_ranking, "final_decision": decision},
                 )

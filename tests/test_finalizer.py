@@ -1,4 +1,5 @@
 from hallmark_mlx.data.schemas import (
+    CandidateMatch,
     FinalDecision,
     ParsedBibliographicFields,
     ToolResultSummary,
@@ -59,6 +60,53 @@ def test_finalize_trace_can_override_existing_generated_decision() -> None:
                 rationale="generated fallback",
             ),
         },
+    )
+
+    finalized = finalize_trace(trace, force=True)
+
+    assert finalized.final_decision is not None
+    assert finalized.final_decision.verdict == VerificationVerdict.HALLUCINATED
+
+
+def test_finalize_trace_requires_full_author_list_for_doi_backed_bibtex() -> None:
+    trace = VerificationTrace(
+        input=VerificationInput(
+            record_id="partial-authors",
+            input_type=InputType.BIBTEX_ENTRY,
+            raw_input=(
+                "@inproceedings{partial-authors,title={Person Re-Identification Using "
+                "Heterogeneous Local Graph Attention Networks},author={Zhong Zhang and "
+                "Haijia Zhang and Shuang Liu},year={2021},doi={10.1109/CVPR46437.2021.01196},"
+                "booktitle={CVPR}}"
+            ),
+        ),
+        parsed_fields=ParsedBibliographicFields(
+            title="Person Re-Identification Using Heterogeneous Local Graph Attention Networks",
+            authors=["Zhong Zhang", "Haijia Zhang", "Shuang Liu"],
+            year=2021,
+            venue="CVPR",
+            doi="10.1109/CVPR46437.2021.01196",
+        ),
+        tool_results=[
+            ToolResultSummary(
+                tool=ToolName.CROSSREF,
+                action="resolve_doi",
+                ok=True,
+                evidence_strength=EvidenceStrength.STRONG,
+                candidate_count=1,
+                candidate_summaries=[
+                    CandidateMatch(
+                        source="crossref",
+                        title="Person Re-Identification Using Heterogeneous Local Graph Attention Networks",
+                        authors=["Zhong Zhang", "Haijia Zhang", "Shuang Liu", "Yali Li"],
+                        year=2021,
+                        venue="CVPR",
+                        doi="10.1109/CVPR46437.2021.01196",
+                        score=1.0,
+                    )
+                ],
+            )
+        ],
     )
 
     finalized = finalize_trace(trace, force=True)

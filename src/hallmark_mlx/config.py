@@ -55,6 +55,7 @@ class ToolsConfig(BaseModel):
     openalex: ToolServiceConfig = Field(default_factory=ToolServiceConfig)
     dblp: ToolServiceConfig = Field(default_factory=ToolServiceConfig)
     acl_anthology: ToolServiceConfig = Field(default_factory=ToolServiceConfig)
+    arxiv: ToolServiceConfig = Field(default_factory=ToolServiceConfig)
     semantic_scholar: ToolServiceConfig = Field(default_factory=ToolServiceConfig)
 
 

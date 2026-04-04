@@ -9,6 +9,7 @@ from hallmark_mlx.data.schemas import (
     VerificationInput,
 )
 from hallmark_mlx.tools.acl_anthology import extract_anthology_id
+from hallmark_mlx.tools.arxiv import extract_arxiv_id
 from hallmark_mlx.types import InputType, ToolName, VerificationAction
 
 _ACL_VENUE_TOKENS = {"acl", "naacl", "eacl", "emnlp", "aacl", "tacl", "coling", "conll"}
@@ -36,6 +37,7 @@ _ACTION_MAP = {
     ToolName.OPENALEX: VerificationAction.QUERY_OPENALEX,
     ToolName.DBLP: VerificationAction.QUERY_DBLP,
     ToolName.ACL_ANTHOLOGY: VerificationAction.QUERY_ACL_ANTHOLOGY,
+    ToolName.ARXIV: VerificationAction.QUERY_ARXIV,
     ToolName.SEMANTIC_SCHOLAR: VerificationAction.QUERY_SEMANTIC_SCHOLAR,
 }
 
@@ -77,6 +79,12 @@ def build_query(
     """Construct a deterministic retrieval query."""
 
     if fields.doi:
+        if extract_arxiv_id(fields.doi):
+            return ProposedQuery(
+                query=fields.doi,
+                purpose="resolve_arxiv_record",
+                target_tool=ToolName.ARXIV,
+            )
         target_tool = (
             ToolName.ACL_ANTHOLOGY if extract_anthology_id(fields.doi) else ToolName.CROSSREF
         )
@@ -137,12 +145,26 @@ def build_tool_calls(
         or extract_anthology_id(fields.url)
         or extract_anthology_id(verification_input.raw_input)
     )
+    arxiv_identifier = (
+        fields.arxiv_id
+        or extract_arxiv_id(fields.doi)
+        or extract_arxiv_id(fields.url)
+        or extract_arxiv_id(verification_input.raw_input)
+    )
     if acl_identifier:
         tool_calls.append(
             ToolInvocation(
                 tool=ToolName.ACL_ANTHOLOGY,
                 action="resolve_record",
                 arguments={"anthology_id": acl_identifier},
+            ),
+        )
+    if arxiv_identifier:
+        tool_calls.append(
+            ToolInvocation(
+                tool=ToolName.ARXIV,
+                action="resolve_record",
+                arguments={"arxiv_id": arxiv_identifier},
             ),
         )
 

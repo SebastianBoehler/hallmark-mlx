@@ -50,6 +50,8 @@ class PolicyRunner:
         self.finalization_mode = finalization_mode
 
     def _finalize(self, trace: VerificationTrace) -> VerificationTrace:
+        if bool(trace.metadata.get("finalization_locked", False)):
+            return trace
         if self.finalization_mode == FinalizationMode.GENERATIVE:
             return trace
         return finalize_trace(trace, force=True)

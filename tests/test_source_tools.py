@@ -2,6 +2,7 @@ from hallmark_mlx.config import ToolsConfig
 from hallmark_mlx.data.schemas import CandidateMatch, ToolInvocation
 from hallmark_mlx.inference.tool_executor import ToolExecutor
 from hallmark_mlx.tools.acl_anthology import extract_anthology_id, resolve_record
+from hallmark_mlx.tools.arxiv import extract_arxiv_id, resolve_record as resolve_arxiv_record
 from hallmark_mlx.tools.dblp import search_works
 from hallmark_mlx.types import ToolName
 
@@ -110,3 +111,56 @@ def test_tool_executor_supports_dblp_and_acl(monkeypatch) -> None:
     assert acl_result.ok is True
     assert acl_result.matched_identifiers["anthology_id"] == "N19-1423"
     assert acl_result.matched_identifiers["doi"] == "10.18653/v1/N19-1423"
+
+
+def test_arxiv_resolve_record_parses_atom(monkeypatch) -> None:
+    atom = (
+        "<?xml version='1.0' encoding='UTF-8'?>"
+        "<feed xmlns='http://www.w3.org/2005/Atom'>"
+        "<entry>"
+        "<id>http://arxiv.org/abs/2602.12124v1</id>"
+        "<published>2026-02-17T00:00:00Z</published>"
+        "<title>Capability-Oriented Training Induced Alignment Risk</title>"
+        "<author><name>Yujun Zhou</name></author>"
+        "<author><name>Yue Huang</name></author>"
+        "</entry>"
+        "</feed>"
+    )
+
+    monkeypatch.setattr("hallmark_mlx.tools.arxiv.fetch_text", lambda *args, **kwargs: atom)
+
+    candidates = resolve_arxiv_record(doi="10.48550/arXiv.2602.12124v1")
+
+    assert extract_arxiv_id("10.48550/arXiv.2602.12124v1") == "2602.12124v1"
+    assert len(candidates) == 1
+    assert candidates[0].title == "Capability-Oriented Training Induced Alignment Risk"
+    assert candidates[0].year == 2026
+    assert candidates[0].venue == "arXiv"
+
+
+def test_tool_executor_supports_arxiv(monkeypatch) -> None:
+    monkeypatch.setattr(
+        "hallmark_mlx.inference.tool_executor.resolve_arxiv_record",
+        lambda arxiv_id=None, doi=None, url=None, timeout=15.0: [
+            CandidateMatch(
+                source="arxiv",
+                title="Capability-Oriented Training Induced Alignment Risk",
+                year=2026,
+                url="http://arxiv.org/abs/2602.12124v1",
+                score=1.0,
+            ),
+        ],
+    )
+
+    executor = ToolExecutor(ToolsConfig())
+    result = executor.execute(
+        ToolInvocation(
+            tool=ToolName.ARXIV,
+            action="resolve_record",
+            arguments={"doi": "10.48550/arXiv.2602.12124v1"},
+        ),
+    )
+
+    assert result.ok is True
+    assert result.candidate_count == 1
+    assert result.evidence_strength.value == "strong"

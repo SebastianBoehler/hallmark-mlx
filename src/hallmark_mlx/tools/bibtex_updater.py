@@ -58,6 +58,7 @@ def check_bibtex(
     report_path: Path | None = None,
     strict: bool = False,
     executable: str = "bibtex-check",
+    timeout_seconds: float | None = None,
 ) -> BibtexUpdaterResult:
     """Run `bibtex-check` on a BibTeX file or entry string."""
 
@@ -67,7 +68,21 @@ def check_bibtex(
         command.extend(["--report", str(report_path)])
     if strict:
         command.append("--strict")
-    completed = subprocess.run(command, capture_output=True, check=False, text=True)
+    try:
+        completed = subprocess.run(
+            command,
+            capture_output=True,
+            check=False,
+            text=True,
+            timeout=timeout_seconds,
+        )
+    except subprocess.TimeoutExpired:
+        completed = subprocess.CompletedProcess(
+            command,
+            124,
+            stdout="",
+            stderr=f"{executable} timed out after {timeout_seconds} seconds",
+        )
     report = _safe_read_report(report_path)
     if cleanup_input:
         input_path.unlink(missing_ok=True)
@@ -85,6 +100,7 @@ def update_bibtex(
     *,
     output_path: Path | None = None,
     executable: str = "bibtex-update",
+    timeout_seconds: float | None = None,
 ) -> BibtexUpdaterResult:
     """Run `bibtex-update` on a BibTeX file or entry string."""
 
@@ -101,7 +117,21 @@ def update_bibtex(
             target_output = Path(handle.name)
             cleanup_output = True
     command = [executable, str(input_path), "-o", str(target_output)]
-    completed = subprocess.run(command, capture_output=True, check=False, text=True)
+    try:
+        completed = subprocess.run(
+            command,
+            capture_output=True,
+            check=False,
+            text=True,
+            timeout=timeout_seconds,
+        )
+    except subprocess.TimeoutExpired:
+        completed = subprocess.CompletedProcess(
+            command,
+            124,
+            stdout="",
+            stderr=f"{executable} timed out after {timeout_seconds} seconds",
+        )
     output_text = read_text(target_output) if target_output.exists() else None
     if cleanup_input:
         input_path.unlink(missing_ok=True)

@@ -13,8 +13,9 @@ from hallmark_mlx.training.prompts import build_available_tools_prompt
 def test_check_bibtex_builds_expected_command(monkeypatch, tmp_path: Path) -> None:
     commands: list[list[str]] = []
 
-    def fake_run(command, capture_output, check, text):  # type: ignore[no-untyped-def]
+    def fake_run(command, capture_output, check, text, timeout):  # type: ignore[no-untyped-def]
         commands.append(command)
+        assert timeout is None
         return subprocess.CompletedProcess(command, 0, stdout="ok", stderr="")
 
     monkeypatch.setattr("subprocess.run", fake_run)
@@ -62,8 +63,9 @@ def test_bibtex_status_helpers_parse_summary_output() -> None:
 def test_check_bibtex_ignores_empty_report_file(monkeypatch, tmp_path: Path) -> None:
     report_path = tmp_path / "report.json"
 
-    def fake_run(command, capture_output, check, text):  # type: ignore[no-untyped-def]
+    def fake_run(command, capture_output, check, text, timeout):  # type: ignore[no-untyped-def]
         report_path.write_text("", encoding="utf-8")
+        assert timeout is None
         return subprocess.CompletedProcess(command, 1, stdout="", stderr="parse error")
 
     monkeypatch.setattr("subprocess.run", fake_run)
@@ -76,6 +78,19 @@ def test_check_bibtex_ignores_empty_report_file(monkeypatch, tmp_path: Path) -> 
     assert result.returncode == 1
     assert result.report is None
     assert result.stderr == "parse error"
+
+
+def test_check_bibtex_returns_timeout_result(monkeypatch) -> None:
+    def fake_run(command, capture_output, check, text, timeout):  # type: ignore[no-untyped-def]
+        raise subprocess.TimeoutExpired(command, timeout=timeout)
+
+    monkeypatch.setattr("subprocess.run", fake_run)
+
+    result = check_bibtex("@article{test,title={Test}}", timeout_seconds=7.5)
+
+    assert result.returncode == 124
+    assert result.stdout == ""
+    assert result.stderr == "bibtex-check timed out after 7.5 seconds"
 
 
 def test_available_tools_prompt_lists_required_arguments_and_verdicts() -> None:

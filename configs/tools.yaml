@@ -20,6 +20,9 @@ tools:
   acl_anthology:
     enabled: true
     timeout_seconds: 15.0
+  arxiv:
+    enabled: true
+    timeout_seconds: 15.0
   semantic_scholar:
     enabled: true
     timeout_seconds: 15.0
