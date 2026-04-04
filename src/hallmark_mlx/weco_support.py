@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import importlib.util
 import json
 import shlex
@@ -28,6 +29,7 @@ class WecoTrialSpec:
     source_path: Path
     base_config_path: Path
     eval_input_path: Path
+    eval_script_path: Path
     policy_mode: str
     trial_name: str
     overrides: dict[str, object]
@@ -61,6 +63,7 @@ def load_trial_spec(source_path: str | Path) -> WecoTrialSpec:
     try:
         base_config = repo_root / module.BASE_CONFIG_PATH
         eval_input = repo_root / module.EVAL_INPUT_PATH
+        eval_script = repo_root / getattr(module, "EVAL_SCRIPT_PATH", "scripts/weco_eval.py")
         policy_mode = str(module.POLICY_MODE)
         trial_name = str(module.TRIAL_NAME)
         overrides = dict(module.TRIAL_OVERRIDES)
@@ -70,6 +73,7 @@ def load_trial_spec(source_path: str | Path) -> WecoTrialSpec:
         source_path=resolved,
         base_config_path=base_config.resolve(),
         eval_input_path=eval_input.resolve(),
+        eval_script_path=eval_script.resolve(),
         policy_mode=policy_mode,
         trial_name=trial_name,
         overrides=overrides,
@@ -113,6 +117,13 @@ def materialize_trial_config(spec: WecoTrialSpec, output_dir: str | Path) -> tup
     return load_config(materialized_path), materialized_path
 
 
+def trial_run_fingerprint(materialized_path: str | Path) -> str:
+    """Return a short deterministic fingerprint for one materialized trial config."""
+
+    payload = Path(materialized_path).read_bytes()
+    return hashlib.sha256(payload).hexdigest()[:12]
+
+
 def build_weco_runner(config: AppConfig, policy_mode: str):
     """Build the runner used by a Weco trial."""
 
@@ -139,14 +150,23 @@ def format_metric_lines(metrics: dict[str, float]) -> list[str]:
     return lines
 
 
-def build_weco_eval_command(source_path: str | Path, python_executable: str) -> str:
+def build_weco_eval_command(
+    spec_or_source: WecoTrialSpec | str | Path,
+    python_executable: str,
+) -> str:
     """Build the shell command passed to `weco run --eval-command`."""
 
-    resolved_source = Path(source_path).resolve()
-    repo_root = resolved_source.parent.parent
+    if isinstance(spec_or_source, WecoTrialSpec):
+        spec = spec_or_source
+        resolved_source = spec.source_path
+        eval_script = spec.eval_script_path
+    else:
+        spec = load_trial_spec(spec_or_source)
+        resolved_source = spec.source_path
+        eval_script = spec.eval_script_path
     command = [
         python_executable,
-        str(repo_root / "scripts" / "weco_eval.py"),
+        str(eval_script),
         "--source",
         str(resolved_source),
     ]

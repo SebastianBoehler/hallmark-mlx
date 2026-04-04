@@ -1,0 +1,12 @@
+{
+  "type": "best_code_snapshot",
+  "created_at": "2026-04-04T21:14:34.231731",
+  "file_count": 1,
+  "files": [
+    {
+      "path": "/Users/sebastianboehler/Documents/GitHub/hallmark-mlx/weco_targets/hallmark_qwen_train_trial.py",
+      "artifact_path": "Users/sebastianboehler/Documents/GitHub/hallmark-mlx/weco_targets/hallmark_qwen_train_trial.py",
+      "bytes": 2071
+    }
+  ]
+}

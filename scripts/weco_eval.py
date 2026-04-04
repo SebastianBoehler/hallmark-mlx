@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 
 from hallmark_mlx.eval.frontier import collect_frontier_metrics
+from hallmark_mlx.eval.metrics import DEFAULT_TOOL_BUDGETS
 from hallmark_mlx.eval.policy_rollout import evaluate_policy_rollout
 from hallmark_mlx.utils.io import write_json
 from hallmark_mlx.weco_support import (
@@ -43,7 +44,7 @@ def main() -> None:
         output_metrics_path=output_dir / "metrics.json",
         output_predictions_path=output_dir / "predictions.jsonl",
         output_traces_path=output_dir / "traces.jsonl",
-        tool_budgets=config.eval.tool_call_budgets,
+        tool_budgets=DEFAULT_TOOL_BUDGETS,
     )
     frontier_metrics = collect_frontier_metrics(metrics)
     write_json(

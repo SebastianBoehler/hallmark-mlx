@@ -1,0 +1,12 @@
+frontier_score: 0.909959
+budget_1_f1_hallucinated: 0.912621
+budget_2_f1_hallucinated: 0.912621
+budget_4_f1_hallucinated: 0.912621
+budget_8_f1_hallucinated: 0.912621
+label_accuracy: 0.859375
+budget_1_resolved_rate: 0.984375
+avg_tool_calls: 1.015625
+first_turn_tool_call_rate: 1.000000
+completion_rate: 1.000000
+materialized_config_path: /Users/sebastianboehler/Documents/GitHub/hallmark-mlx/artifacts/weco/materialized/hallmark-qwen-train-frontier.yaml
+output_dir: /Users/sebastianboehler/Documents/GitHub/hallmark-mlx/artifacts/weco/hallmark-qwen-train-frontier/12e9ac69f127/hallmark_dev_search64_gold_traces

@@ -1,0 +1,77 @@
+Loading pretrained model
+
+Fetching 7 files:   0%|          | 0/7 [00:00<?, ?it/s]
+Fetching 7 files: 100%|██████████| 7/7 [00:00<00:00, 109145.46it/s]
+Loading datasets
+Training
+Trainable parameters: 0.214% (3.297M/1543.714M)
+Starting training..., iters: 100
+
+Calculating loss...:   0%|          | 0/4 [00:00<?, ?it/s]
+Calculating loss...:  25%|██▌       | 1/4 [00:00<00:01,  1.77it/s]
+Calculating loss...:  50%|█████     | 2/4 [00:01<00:01,  1.98it/s]
+Calculating loss...:  75%|███████▌  | 3/4 [00:01<00:00,  2.11it/s]
+Calculating loss...: 100%|██████████| 4/4 [00:02<00:00,  1.84it/s]
+Calculating loss...: 100%|██████████| 4/4 [00:02<00:00,  1.89it/s]
+Iter 1: Val loss 1.568, Val took 2.117s
+
+Calculating loss...:   0%|          | 0/4 [00:00<?, ?it/s]
+Calculating loss...:  25%|██▌       | 1/4 [00:00<00:02,  1.44it/s]
+Calculating loss...:  50%|█████     | 2/4 [00:01<00:01,  1.84it/s]
+Calculating loss...:  75%|███████▌  | 3/4 [00:01<00:00,  1.92it/s]
+Calculating loss...: 100%|██████████| 4/4 [00:02<00:00,  1.91it/s]
+Calculating loss...: 100%|██████████| 4/4 [00:02<00:00,  1.86it/s]
+Iter 20: Val loss 1.227, Val took 2.156s
+Iter 20: Train loss 1.043, Learning Rate 1.800e-04, It/sec 0.882, Tokens/sec 50.615, Trained Tokens 1148, Peak mem 6.760 GB
+
+Calculating loss...:   0%|          | 0/4 [00:00<?, ?it/s]
+Calculating loss...:  25%|██▌       | 1/4 [00:00<00:02,  1.39it/s]
+Calculating loss...:  50%|█████     | 2/4 [00:01<00:01,  1.60it/s]
+Calculating loss...:  75%|███████▌  | 3/4 [00:01<00:00,  1.72it/s]
+Calculating loss...: 100%|██████████| 4/4 [00:02<00:00,  1.90it/s]
+Calculating loss...: 100%|██████████| 4/4 [00:02<00:00,  1.78it/s]
+Iter 40: Val loss 1.191, Val took 2.254s
+Iter 40: Train loss 0.553, Learning Rate 1.800e-04, It/sec 0.854, Tokens/sec 55.315, Trained Tokens 2443, Peak mem 7.610 GB
+
+Calculating loss...:   0%|          | 0/4 [00:00<?, ?it/s]
+Calculating loss...:  25%|██▌       | 1/4 [00:00<00:01,  1.56it/s]
+Calculating loss...:  50%|█████     | 2/4 [00:01<00:01,  1.74it/s]
+Calculating loss...:  75%|███████▌  | 3/4 [00:01<00:00,  1.86it/s]
+Calculating loss...: 100%|██████████| 4/4 [00:02<00:00,  2.01it/s]
+Calculating loss...: 100%|██████████| 4/4 [00:02<00:00,  1.91it/s]
+Iter 60: Val loss 0.764, Val took 2.102s
+Iter 60: Train loss 0.689, Learning Rate 1.800e-04, It/sec 0.797, Tokens/sec 49.732, Trained Tokens 3691, Peak mem 7.610 GB
+
+Calculating loss...:   0%|          | 0/4 [00:00<?, ?it/s]
+Calculating loss...:  25%|██▌       | 1/4 [00:00<00:01,  1.90it/s]
+Calculating loss...:  50%|█████     | 2/4 [00:01<00:01,  1.90it/s]
+Calculating loss...:  75%|███████▌  | 3/4 [00:01<00:00,  1.71it/s]
+Calculating loss...: 100%|██████████| 4/4 [00:02<00:00,  1.92it/s]
+Calculating loss...: 100%|██████████| 4/4 [00:02<00:00,  1.88it/s]
+Iter 80: Val loss 0.668, Val took 2.134s
+Iter 80: Train loss 0.445, Learning Rate 1.800e-04, It/sec 0.884, Tokens/sec 58.693, Trained Tokens 5019, Peak mem 7.610 GB
+
+Calculating loss...:   0%|          | 0/4 [00:00<?, ?it/s]
+Calculating loss...:  25%|██▌       | 1/4 [00:00<00:01,  2.36it/s]
+Calculating loss...:  50%|█████     | 2/4 [00:00<00:00,  2.01it/s]
+Calculating loss...:  75%|███████▌  | 3/4 [00:01<00:00,  2.07it/s]
+Calculating loss...: 100%|██████████| 4/4 [00:01<00:00,  2.13it/s]
+Calculating loss...: 100%|██████████| 4/4 [00:01<00:00,  2.12it/s]
+Iter 100: Val loss 0.933, Val took 1.890s
+Iter 100: Train loss 0.132, Learning Rate 1.800e-04, It/sec 0.947, Tokens/sec 49.079, Trained Tokens 6056, Peak mem 7.610 GB
+Saved final weights to /Users/sebastianboehler/Documents/GitHub/hallmark-mlx/artifacts/weco/hallmark-qwen-train-frontier/3550811abd76/adapter/adapters.safetensors.
+
+Fetching 7 files:   0%|          | 0/7 [00:00<?, ?it/s]
+Fetching 7 files: 100%|██████████| 7/7 [00:00<00:00, 115137.76it/s]
+frontier_score: 0.907423
+budget_1_f1_hallucinated: 0.912621
+budget_2_f1_hallucinated: 0.912621
+budget_4_f1_hallucinated: 0.903846
+budget_8_f1_hallucinated: 0.903846
+label_accuracy: 0.843750
+budget_1_resolved_rate: 0.984375
+avg_tool_calls: 1.046875
+first_turn_tool_call_rate: 1.000000
+completion_rate: 1.000000
+materialized_config_path: /Users/sebastianboehler/Documents/GitHub/hallmark-mlx/artifacts/weco/materialized/hallmark-qwen-train-frontier.yaml
+output_dir: /Users/sebastianboehler/Documents/GitHub/hallmark-mlx/artifacts/weco/hallmark-qwen-train-frontier/3550811abd76/hallmark_dev_search64_gold_traces

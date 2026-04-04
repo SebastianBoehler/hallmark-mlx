@@ -9,7 +9,12 @@ import subprocess
 import sys
 from pathlib import Path
 
-from hallmark_mlx.weco_support import WecoSupportError, build_weco_eval_command, require_weco_cli
+from hallmark_mlx.weco_support import (
+    WecoSupportError,
+    build_weco_eval_command,
+    load_trial_spec,
+    require_weco_cli,
+)
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_SOURCE = REPO_ROOT / "weco_targets" / "hallmark_policy_trial.py"
@@ -36,7 +41,8 @@ def build_parser() -> argparse.ArgumentParser:
 def main() -> None:
     args, passthrough = build_parser().parse_known_args()
     try:
-        source_path = Path(args.source).resolve()
+        trial_spec = load_trial_spec(args.source)
+        source_path = trial_spec.source_path
         instructions_path = Path(args.instructions).resolve()
         command = [
             require_weco_cli(),
@@ -44,7 +50,7 @@ def main() -> None:
             "--source",
             str(source_path),
             "--eval-command",
-            build_weco_eval_command(source_path, sys.executable),
+            build_weco_eval_command(trial_spec, sys.executable),
             "--metric",
             args.metric,
             "--goal",

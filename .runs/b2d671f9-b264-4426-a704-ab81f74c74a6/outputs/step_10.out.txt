@@ -1,0 +1,95 @@
+Loading pretrained model
+
+Fetching 7 files:   0%|          | 0/7 [00:00<?, ?it/s]
+Fetching 7 files: 100%|██████████| 7/7 [00:00<00:00, 48289.68it/s]
+Loading datasets
+Training
+Trainable parameters: 0.299% (4.616M/1543.714M)
+Starting training..., iters: 140
+
+Calculating loss...:   0%|          | 0/4 [00:00<?, ?it/s]
+Calculating loss...:  25%|██▌       | 1/4 [00:00<00:01,  1.65it/s]
+Calculating loss...:  50%|█████     | 2/4 [00:01<00:01,  1.89it/s]
+Calculating loss...:  75%|███████▌  | 3/4 [00:01<00:00,  2.03it/s]
+Calculating loss...: 100%|██████████| 4/4 [00:02<00:00,  1.78it/s]
+Calculating loss...: 100%|██████████| 4/4 [00:02<00:00,  1.82it/s]
+Iter 1: Val loss 1.568, Val took 2.202s
+
+Calculating loss...:   0%|          | 0/4 [00:00<?, ?it/s]
+Calculating loss...:  25%|██▌       | 1/4 [00:00<00:02,  1.39it/s]
+Calculating loss...:  50%|█████     | 2/4 [00:01<00:01,  1.79it/s]
+Calculating loss...:  75%|███████▌  | 3/4 [00:01<00:00,  1.85it/s]
+Calculating loss...: 100%|██████████| 4/4 [00:02<00:00,  1.78it/s]
+Calculating loss...: 100%|██████████| 4/4 [00:02<00:00,  1.76it/s]
+Iter 20: Val loss 0.772, Val took 2.284s
+Iter 20: Train loss 1.047, Learning Rate 1.400e-04, It/sec 0.747, Tokens/sec 42.868, Trained Tokens 1148, Peak mem 6.976 GB
+
+Calculating loss...:   0%|          | 0/4 [00:00<?, ?it/s]
+Calculating loss...:  25%|██▌       | 1/4 [00:00<00:02,  1.48it/s]
+Calculating loss...:  50%|█████     | 2/4 [00:01<00:01,  1.67it/s]
+Calculating loss...:  75%|███████▌  | 3/4 [00:01<00:00,  1.75it/s]
+Calculating loss...: 100%|██████████| 4/4 [00:02<00:00,  1.85it/s]
+Calculating loss...: 100%|██████████| 4/4 [00:02<00:00,  1.78it/s]
+Iter 40: Val loss 0.876, Val took 2.258s
+Iter 40: Train loss 0.339, Learning Rate 1.400e-04, It/sec 0.729, Tokens/sec 47.191, Trained Tokens 2443, Peak mem 7.592 GB
+
+Calculating loss...:   0%|          | 0/4 [00:00<?, ?it/s]
+Calculating loss...:  25%|██▌       | 1/4 [00:00<00:01,  1.52it/s]
+Calculating loss...:  50%|█████     | 2/4 [00:01<00:01,  1.69it/s]
+Calculating loss...:  75%|███████▌  | 3/4 [00:01<00:00,  1.78it/s]
+Calculating loss...: 100%|██████████| 4/4 [00:02<00:00,  1.94it/s]
+Calculating loss...: 100%|██████████| 4/4 [00:02<00:00,  1.84it/s]
+Iter 60: Val loss 0.634, Val took 2.180s
+Iter 60: Train loss 0.596, Learning Rate 1.400e-04, It/sec 0.680, Tokens/sec 42.445, Trained Tokens 3691, Peak mem 7.592 GB
+
+Calculating loss...:   0%|          | 0/4 [00:00<?, ?it/s]
+Calculating loss...:  25%|██▌       | 1/4 [00:00<00:01,  1.79it/s]
+Calculating loss...:  50%|█████     | 2/4 [00:01<00:01,  1.77it/s]
+Calculating loss...:  75%|███████▌  | 3/4 [00:01<00:00,  1.53it/s]
+Calculating loss...: 100%|██████████| 4/4 [00:02<00:00,  1.74it/s]
+Calculating loss...: 100%|██████████| 4/4 [00:02<00:00,  1.71it/s]
+Iter 80: Val loss 0.663, Val took 2.349s
+Iter 80: Train loss 0.421, Learning Rate 1.400e-04, It/sec 0.755, Tokens/sec 50.140, Trained Tokens 5019, Peak mem 7.592 GB
+
+Calculating loss...:   0%|          | 0/4 [00:00<?, ?it/s]
+Calculating loss...:  25%|██▌       | 1/4 [00:00<00:01,  2.21it/s]
+Calculating loss...:  50%|█████     | 2/4 [00:01<00:01,  1.81it/s]
+Calculating loss...:  75%|███████▌  | 3/4 [00:01<00:00,  1.87it/s]
+Calculating loss...: 100%|██████████| 4/4 [00:02<00:00,  1.92it/s]
+Calculating loss...: 100%|██████████| 4/4 [00:02<00:00,  1.91it/s]
+Iter 100: Val loss 0.916, Val took 2.093s
+Iter 100: Train loss 0.130, Learning Rate 1.400e-04, It/sec 0.788, Tokens/sec 40.881, Trained Tokens 6056, Peak mem 7.592 GB
+
+Calculating loss...:   0%|          | 0/4 [00:00<?, ?it/s]
+Calculating loss...:  25%|██▌       | 1/4 [00:00<00:01,  1.56it/s]
+Calculating loss...:  50%|█████     | 2/4 [00:01<00:01,  1.64it/s]
+Calculating loss...:  75%|███████▌  | 3/4 [00:01<00:00,  1.77it/s]
+Calculating loss...: 100%|██████████| 4/4 [00:02<00:00,  1.68it/s]
+Calculating loss...: 100%|██████████| 4/4 [00:02<00:00,  1.68it/s]
+Iter 120: Val loss 0.765, Val took 2.385s
+Iter 120: Train loss 0.136, Learning Rate 1.400e-04, It/sec 0.603, Tokens/sec 41.705, Trained Tokens 7440, Peak mem 7.592 GB
+
+Calculating loss...:   0%|          | 0/4 [00:00<?, ?it/s]
+Calculating loss...:  25%|██▌       | 1/4 [00:00<00:01,  1.74it/s]
+Calculating loss...:  50%|█████     | 2/4 [00:01<00:01,  1.70it/s]
+Calculating loss...:  75%|███████▌  | 3/4 [00:01<00:00,  1.46it/s]
+Calculating loss...: 100%|██████████| 4/4 [00:02<00:00,  1.49it/s]
+Calculating loss...: 100%|██████████| 4/4 [00:02<00:00,  1.53it/s]
+Iter 140: Val loss 0.560, Val took 2.624s
+Iter 140: Train loss 0.157, Learning Rate 1.400e-04, It/sec 0.606, Tokens/sec 33.433, Trained Tokens 8543, Peak mem 7.611 GB
+Saved final weights to /Users/sebastianboehler/Documents/GitHub/hallmark-mlx/artifacts/weco/hallmark-qwen-train-frontier-iterative/1f265ffc2985/adapter/adapters.safetensors.
+
+Fetching 7 files:   0%|          | 0/7 [00:00<?, ?it/s]
+Fetching 7 files: 100%|██████████| 7/7 [00:00<00:00, 57344.00it/s]
+frontier_score: 0.908739
+budget_1_f1_hallucinated: 0.912621
+budget_2_f1_hallucinated: 0.912621
+budget_4_f1_hallucinated: 0.912621
+budget_8_f1_hallucinated: 0.903846
+label_accuracy: 0.843750
+budget_1_resolved_rate: 0.984375
+avg_tool_calls: 1.078125
+first_turn_tool_call_rate: 1.000000
+completion_rate: 1.000000
+materialized_config_path: /Users/sebastianboehler/Documents/GitHub/hallmark-mlx/artifacts/weco/materialized/hallmark-qwen-train-frontier-iterative.yaml
+output_dir: /Users/sebastianboehler/Documents/GitHub/hallmark-mlx/artifacts/weco/hallmark-qwen-train-frontier-iterative/1f265ffc2985/hallmark_dev_search64_gold_traces

@@ -2,6 +2,11 @@
 
 `hallmark-mlx` uses Weco to optimize the citation-verification frontier rather than raw score at any cost.
 
+There are two separate Weco loops:
+
+- `weco_targets/hallmark_policy_trial.py`: inference/controller frontier for the deterministic policy.
+- `weco_targets/hallmark_qwen_train_trial.py`: short-run Qwen LoRA frontier for the trainable policy.
+
 ## What To Optimize
 
 The current scalar objective is `frontier_score`:
@@ -23,9 +28,9 @@ The helper lives in `src/hallmark_mlx/eval/frontier.py`.
 
 ## Search Surface
 
-The default editable target is `weco_targets/hallmark_policy_trial.py`.
+The default controller target is `weco_targets/hallmark_policy_trial.py`.
 
-Weco should optimize:
+For the controller target, Weco should optimize:
 
 - `POLICY_MODE`
 - `model.max_rollout_rounds`
@@ -34,20 +39,36 @@ Weco should optimize:
 - per-tool `enabled` flags
 - per-tool `rows`
 
+For the Qwen training target, Weco should optimize:
+
+- `model.max_tokens`
+- `model.max_rollout_rounds`
+- `training.num_layers`
+- `training.learning_rate`
+- `training.num_iterations`
+- `training.max_seq_length`
+- `training.grad_accumulation_steps`
+- per-tool `enabled` flags
+- per-tool `rows`
+
 Weco should not optimize:
 
 - the benchmark slice path,
+- the tool-call budgets,
 - verdict label semantics,
 - metric definitions,
 - or broad MLX training hyperparameters.
 
-That search surface is deliberate. The highest-leverage gains currently come from inference-time routing, fallback, and stopping behavior rather than expensive retraining.
+The evaluator fixes the frontier budgets to `(1, 2, 4, 8)` inside the Weco eval scripts so trial edits cannot change the objective itself.
 
 ## Files
 
 - editable target: `weco_targets/hallmark_policy_trial.py`
 - instructions: `weco_targets/hallmark_policy_trial_instructions.md`
+- train target: `weco_targets/hallmark_qwen_train_trial.py`
+- train instructions: `weco_targets/hallmark_qwen_train_trial_instructions.md`
 - eval entrypoint: `scripts/weco_eval.py`
+- train eval entrypoint: `scripts/weco_train_eval.py`
 - launcher: `scripts/weco_run.py`
 - tracked search split: `data/weco/hallmark_dev_search64_gold_traces.jsonl`
 - tracked comparison split: `data/weco/hallmark_dev_compare32_gold_traces.jsonl`
@@ -79,7 +100,17 @@ python scripts/weco_run.py --dry-run
 Launch a search:
 
 ```bash
-python scripts/weco_run.py --steps 12 --model gpt-5.4-mini
+python scripts/weco_run.py --steps 12 --model gpt-5-mini
+```
+
+Launch a short Qwen-training search:
+
+```bash
+python scripts/weco_run.py \
+  --source weco_targets/hallmark_qwen_train_trial.py \
+  --instructions weco_targets/hallmark_qwen_train_trial_instructions.md \
+  --steps 4 \
+  --model gpt-5-mini
 ```
 
 ## Interpreting Results
