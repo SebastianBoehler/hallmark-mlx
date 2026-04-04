@@ -1,5 +1,7 @@
 .DS_Store
 .cache.fact_checker.db
+.cache.fact_checker.db-shm
+.cache.fact_checker.db-wal
 .cache.replace_preprints.db
 .coverage
 .mypy_cache/
