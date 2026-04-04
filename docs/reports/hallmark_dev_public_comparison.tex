@@ -1,0 +1,31 @@
+\begin{tabular}{lrrrrrrrr}
+\toprule
+method & source & num_entries & partial & f1_hallucination & detection_rate & tier_weighted_f1 & false_positive_rate & notes \\
+\midrule
+hallmark\_mlx\_bibtex\_first\_fallback & executed\_here & 1119 & False & 0.942 & 0.947 & 0.946 & 0.129 & Merged 8 shard directories from /Users/sebastianboehler/Documents/GitHub/hallmark-mlx/artifacts/official\_eval\_sharded\_fast5/dev\_public\_bibtex\_first\_fallback/shards. \\
+bibtexupdater & upstream\_published\_result & 1119 & False & 0.908 & 0.946 & 0.936 & 0.179 & Published by upstream repo in bibtexupdater\_dev\_public.json. \\
+llm\_tool\_augmented & upstream\_published\_predictions & 1119 & False & 0.846 & 0.818 & 0.856 & 0.144 & Predictions JSONL shipped upstream; metrics recomputed locally. \\
+always\_hallucinated & executed\_here & 1119 & False & 0.723 & 1.000 & 0.842 & 1.000 & Generated 1119 predictions locally. \\
+ensemble & upstream\_history\_partial & 500 & True & 0.610 & 0.500 & 0.544 & 0.016 & Historical upstream run; not a current full dev\_public published result. \\
+random & executed\_here & 1119 & False & 0.523 & 0.485 & 0.575 & 0.481 & Generated 1119 predictions locally. \\
+doi\_presence\_heuristic & executed\_here & 1119 & False & 0.492 & 0.466 & 0.576 & 0.556 & Generated 1119 predictions locally. \\
+title\_oracle & executed\_here & 1119 & False & 0.457 & 0.523 & 0.473 & 1.000 & Generated 1119 predictions locally. \\
+venue\_oracle & executed\_here & 1119 & False & 0.399 & 0.250 & 0.396 & 0.000 & Generated 1119 predictions locally. \\
+harc & upstream\_published\_result & 521 & True & 0.268 & 0.155 & 0.188 & 0.000 & Published by upstream repo in harc\_dev\_public.json. \\
+verify\_citations & upstream\_history\_partial & 500 & True & 0.240 & 0.300 & 0.302 & 0.133 & Historical upstream run; not a current full dev\_public published result. \\
+doi\_only & upstream\_history\_partial & 500 & True & 0.163 & 0.240 & 0.175 & 0.189 & Historical upstream run; not a current full dev\_public published result. \\
+always\_valid & executed\_here & 1119 & False & 0.000 & 0.000 & 0.000 & 0.000 & Generated 1119 predictions locally. \\
+doi\_only\_no\_prescreening & execution\_failed & 0 & False & - & - & - & - & Server disconnected without sending a response. \\
+bibtexupdater\_no\_prescreening & execution\_failed & 0 & False & - & - & - & - & Timed out after 300 seconds \\
+harc\_no\_prescreening & execution\_failed & 0 & False & - & - & - & - & Timed out after 300 seconds \\
+verify\_citations\_no\_prescreening & unavailable & 0 & False & - & - & - & - & Missing CLI commands: verify-citations. Install the package that provides them. \\
+llm\_openai & unavailable & 0 & False & - & - & - & - & Missing packages: openai. Install with: pip install openai \\
+llm\_anthropic & unavailable & 0 & False & - & - & - & - & Missing packages: anthropic. Install with: pip install anthropic \\
+llm\_openrouter\_deepseek\_r1 & unavailable & 0 & False & - & - & - & - & Missing packages: openai. Install with: pip install openai \\
+llm\_openrouter\_deepseek\_v3 & unavailable & 0 & False & - & - & - & - & Missing packages: openai. Install with: pip install openai \\
+llm\_openrouter\_qwen & unavailable & 0 & False & - & - & - & - & Missing packages: openai. Install with: pip install openai \\
+llm\_openrouter\_mistral & unavailable & 0 & False & - & - & - & - & Missing packages: openai. Install with: pip install openai \\
+llm\_openrouter\_gemini\_flash & unavailable & 0 & False & - & - & - & - & Missing packages: openai. Install with: pip install openai \\
+\bottomrule
+\end{tabular}
+% dev_public

@@ -35,6 +35,30 @@ This is for iteration speed, not for claiming benchmark parity.
 
 For real HALLMARK runs, do not synthesize `bibtex_key` values. Use the exact keys provided by the benchmark loader.
 
+## 3. Resumable Official Runs
+
+Full official `dev_public` runs are expensive because the controller may invoke external
+verification CLIs per entry. Use the dedicated runner:
+
+```bash
+uv run python scripts/run_official_controller_eval.py \
+  --upstream-root /tmp/hallmark-upstream \
+  --split dev_public \
+  --mode bibtex_first_fallback \
+  --output-dir artifacts/official_eval/dev_public_bibtex_first_fallback \
+  --entry-timeout-seconds 20 \
+  --progress-every 10
+```
+
+The output directory is resumable and traceable:
+
+- `entries/0000.json`, `entries/0001.json`, ... store one completed trace per official entry
+- `progress.json` records completed entries, remaining entries, timeout budget, and run status
+- `traces.jsonl`, `predictions.jsonl`, and `result.json` are written once the requested slice completes
+
+Re-running the same command resumes from existing entry checkpoints. Use `--limit N` for a
+partial smoke run that still uses the official evaluator on the first `N` official entries.
+
 ## Benchmark Hygiene
 
 To avoid overfitting or leakage:

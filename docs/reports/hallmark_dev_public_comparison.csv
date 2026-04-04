@@ -1,0 +1,25 @@
+method,source,num_entries,partial,f1_hallucination,detection_rate,tier_weighted_f1,false_positive_rate,notes
+hallmark_mlx_bibtex_first_fallback,executed_here,1119,False,0.9420560747663552,0.9473684210526315,0.946372239747634,0.12878787878787878,Merged 8 shard directories from /Users/sebastianboehler/Documents/GitHub/hallmark-mlx/artifacts/official_eval_sharded_fast5/dev_public_bibtex_first_fallback/shards.
+bibtexupdater,upstream_published_result,1119,False,0.9082638362395754,0.9462875197472354,0.9363008442056792,0.17901234567901234,Published by upstream repo in bibtexupdater_dev_public.json.
+llm_tool_augmented,upstream_published_predictions,1119,False,0.8456014362657093,0.8177083333333334,0.8560885608856089,0.14439655172413793,Predictions JSONL shipped upstream; metrics recomputed locally.
+always_hallucinated,executed_here,1119,False,0.7226027397260274,1.0,0.8424124513618676,1.0,Generated 1119 predictions locally.
+ensemble,upstream_history_partial,500,True,0.6097560975609756,0.5,0.5441176470588235,0.015555555555555555,Historical upstream run; not a current full dev_public published result.
+random,executed_here,1119,False,0.5229982964224872,0.4849921011058452,0.5752788104089219,0.48148148148148145,Generated 1119 predictions locally.
+doi_presence_heuristic,executed_here,1119,False,0.49248747913188645,0.4660347551342812,0.5762250453720508,0.5555555555555556,Generated 1119 predictions locally.
+title_oracle,executed_here,1119,False,0.4565517241379311,0.5229067930489731,0.47305389221556887,1.0,Generated 1119 predictions locally.
+venue_oracle,executed_here,1119,False,0.3994943109987358,0.24960505529225907,0.3962962962962963,0.0,Generated 1119 predictions locally.
+harc,upstream_published_result,521,True,0.26829268292682923,0.15492957746478872,0.1875,0.0,Published by upstream repo in harc_dev_public.json.
+verify_citations,upstream_history_partial,500,True,0.24,0.3,0.3016759776536313,0.13333333333333333,Historical upstream run; not a current full dev_public published result.
+doi_only,upstream_history_partial,500,True,0.16326530612244897,0.24,0.17525773195876287,0.18888888888888888,Historical upstream run; not a current full dev_public published result.
+always_valid,executed_here,1119,False,0.0,0.0,0.0,0.0,Generated 1119 predictions locally.
+doi_only_no_prescreening,execution_failed,0,False,,,,,Server disconnected without sending a response.
+bibtexupdater_no_prescreening,execution_failed,0,False,,,,,Timed out after 300 seconds
+harc_no_prescreening,execution_failed,0,False,,,,,Timed out after 300 seconds
+verify_citations_no_prescreening,unavailable,0,False,,,,,Missing CLI commands: verify-citations. Install the package that provides them.
+llm_openai,unavailable,0,False,,,,,Missing packages: openai. Install with: pip install openai
+llm_anthropic,unavailable,0,False,,,,,Missing packages: anthropic. Install with: pip install anthropic
+llm_openrouter_deepseek_r1,unavailable,0,False,,,,,Missing packages: openai. Install with: pip install openai
+llm_openrouter_deepseek_v3,unavailable,0,False,,,,,Missing packages: openai. Install with: pip install openai
+llm_openrouter_qwen,unavailable,0,False,,,,,Missing packages: openai. Install with: pip install openai
+llm_openrouter_mistral,unavailable,0,False,,,,,Missing packages: openai. Install with: pip install openai
+llm_openrouter_gemini_flash,unavailable,0,False,,,,,Missing packages: openai. Install with: pip install openai
