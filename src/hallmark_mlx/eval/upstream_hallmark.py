@@ -158,7 +158,7 @@ def result_to_row(
         "split": result.split_name,
         "num_entries": result.num_entries,
         "coverage": result.coverage,
-        "partial": partial or result.num_entries < 1119 or result.coverage < 0.999,
+        "partial": partial or result.coverage < 0.999,
         "notes": notes,
         "detection_rate": result.detection_rate,
         "false_positive_rate": result.false_positive_rate,
@@ -204,7 +204,7 @@ def load_published_rows(
         )
 
     llm_predictions_path = results_dir / "llm_tool_augmented_dev_public.jsonl"
-    if llm_predictions_path.exists():
+    if split == "dev_public" and llm_predictions_path.exists():
         predictions = load_prediction_file(root, llm_predictions_path)
         result = evaluate_predictions(
             root,
