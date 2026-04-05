@@ -21,6 +21,7 @@ class HFBundleSpec:
     search64_summary_path: Path
     official_dev_row_path: Path
     source_traces_path: Path | None = None
+    license_path: Path | None = None
     dataset_name: str = "hallmark-mlx-reviewed-policy-traces"
     model_name: str = "hallmark-mlx-qwen25-1.5b-lora"
 
@@ -45,7 +46,7 @@ def _dataset_card(spec: HFBundleSpec, train_rows: int, valid_rows: int) -> str:
         [
             "---",
             f"pretty_name: {spec.dataset_name}",
-            "license: other",
+            "license: mit",
             "language:",
             "- en",
             "task_categories:",
@@ -71,7 +72,7 @@ def _dataset_card(spec: HFBundleSpec, train_rows: int, valid_rows: int) -> str:
             "",
             "## Upload Note",
             "",
-            "Set the final dataset license and repo metadata before publishing publicly.",
+            "Review the dataset card metadata before publishing publicly.",
             "",
         ]
     ).replace("\n\n\n", "\n\n")
@@ -90,7 +91,7 @@ def _model_card(
         [
             "---",
             f"base_model: {train_manifest['base_model']}",
-            "license: other",
+            "license: mit",
             "library_name: mlx-lm",
             "tags:",
             "- lora",
@@ -148,7 +149,7 @@ def _model_card(
             "",
             "## Upload Note",
             "",
-            "Set the final model license and public card metadata before publishing publicly.",
+            "Review the model card metadata before publishing publicly.",
             "",
         ]
     )
@@ -166,6 +167,9 @@ def prepare_hf_bundle(spec: HFBundleSpec) -> dict[str, str]:
     _copy_file(valid_path, dataset_root / "valid.jsonl")
     if spec.source_traces_path is not None and spec.source_traces_path.exists():
         _copy_file(spec.source_traces_path, dataset_root / spec.source_traces_path.name)
+    if spec.license_path is not None and spec.license_path.exists():
+        _copy_file(spec.license_path, dataset_root / "LICENSE")
+        _copy_file(spec.license_path, model_root / "LICENSE")
 
     train_manifest = read_json(spec.train_manifest_path)
     search_summary = read_json(spec.search64_summary_path)
@@ -211,16 +215,13 @@ def prepare_hf_bundle(spec: HFBundleSpec) -> dict[str, str]:
                 "Upload the generated folders with the `hf` CLI:",
                 "",
                 "```bash",
-                "hf repo create <username>/" + spec.dataset_name + " --type dataset",
+                "hf repo create <username>/" + spec.dataset_name + " --repo-type dataset",
                 f"hf upload <username>/{spec.dataset_name} {dataset_root} . --repo-type dataset",
-                "hf repo create <username>/" + spec.model_name + " --type model",
+                "hf repo create <username>/" + spec.model_name + " --repo-type model",
                 f"hf upload <username>/{spec.model_name} {model_root} . --repo-type model",
                 "```",
                 "",
-                (
-                    "Edit the generated README cards to set the final public "
-                    "license and author metadata."
-                ),
+                "Edit the generated README cards if you want to change the public metadata.",
                 "",
             ]
         ),

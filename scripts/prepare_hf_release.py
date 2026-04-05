@@ -71,6 +71,7 @@ def main() -> None:
             search64_summary_path=Path(args.search_summary).resolve(),
             official_dev_row_path=Path(args.official_dev_row).resolve(),
             source_traces_path=Path(args.source_traces).resolve(),
+            license_path=(ROOT / "LICENSE").resolve(),
         )
     )
     print(json.dumps(payload, indent=2))
