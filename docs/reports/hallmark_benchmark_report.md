@@ -4,7 +4,7 @@
 
 | method | source | num_entries | partial | f1_hallucination | detection_rate | tier_weighted_f1 | false_positive_rate | notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| hallmark_mlx_bibtex_first_fallback | executed_here | 1119 | False | 0.942 | 0.947 | 0.946 | 0.129 | Merged 8 shard directories from /Users/sebastianboehler/Documents/GitHub/hallmark-mlx/artifacts/official_eval_sharded_fast5/dev_public_bibtex_first_fallback/shards. |
+| hallmark_mlx_bibtex_first_fallback | executed_here | 1119 | False | 0.934 | 0.963 | 0.952 | 0.156 | Merged 8 shard directories from /Users/sebastianboehler/Documents/GitHub/hallmark-mlx/artifacts/official_eval_sharded_fast5_confirm/dev_public_bibtex_first_fallback/shards. |
 | bibtexupdater | upstream_published_result | 1119 | False | 0.908 | 0.946 | 0.936 | 0.179 | Published by upstream repo in bibtexupdater_dev_public.json. |
 | llm_tool_augmented | upstream_published_predictions | 1119 | False | 0.846 | 0.818 | 0.856 | 0.144 | Predictions JSONL shipped upstream; metrics recomputed locally. |
 | always_hallucinated | executed_here | 1119 | False | 0.723 | 1.000 | 0.842 | 1.000 | Generated 1119 predictions locally. |

@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parents[3]
 OUR_ROW_PATH = (
     ROOT
     / "artifacts"
-    / "official_eval_sharded_fast5"
+    / "official_eval_sharded_fast5_confirm"
     / "dev_public_bibtex_first_fallback"
     / "merged"
     / "row.json"
@@ -17,7 +17,7 @@ OUR_ROW_PATH = (
 OUR_RESULT_PATH = (
     ROOT
     / "artifacts"
-    / "official_eval_sharded_fast5"
+    / "official_eval_sharded_fast5_confirm"
     / "dev_public_bibtex_first_fallback"
     / "merged"
     / "result.json"
@@ -36,7 +36,8 @@ REPRO_COMMAND = """for offset in 0 140 280 420 560 700 840 980; do
     --split dev_public \\
     --mode bibtex_first_fallback \\
     --output-dir \\
-      artifacts/official_eval_sharded_fast5/dev_public_bibtex_first_fallback/shards/${shard} \\
+      artifacts/official_eval_sharded_fast5_confirm/ \\
+      dev_public_bibtex_first_fallback/shards/${shard} \\
     --entry-timeout-seconds 5 \\
     --offset ${offset} \\
     --limit 140
@@ -51,8 +52,10 @@ description=$(
 uv run python scripts/merge_official_eval_shards.py \\
   --upstream-root /tmp/hallmark-upstream \\
   --split dev_public \\
-  --shards-root artifacts/official_eval_sharded_fast5/dev_public_bibtex_first_fallback/shards \\
-  --output-dir artifacts/official_eval_sharded_fast5/dev_public_bibtex_first_fallback/merged \\
+  --shards-root artifacts/official_eval_sharded_fast5_confirm/ \\
+    dev_public_bibtex_first_fallback/shards \\
+  --output-dir artifacts/official_eval_sharded_fast5_confirm/ \\
+    dev_public_bibtex_first_fallback/merged \\
   --method-name hallmark_mlx_bibtex_first_fallback \\
   --description "${description}"
 """

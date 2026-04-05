@@ -1,5 +1,5 @@
 method,source,num_entries,partial,f1_hallucination,detection_rate,tier_weighted_f1,false_positive_rate,notes
-hallmark_mlx_bibtex_first_fallback,executed_here,1119,False,0.9420560747663552,0.9473684210526315,0.946372239747634,0.12878787878787878,Merged 8 shard directories from /Users/sebastianboehler/Documents/GitHub/hallmark-mlx/artifacts/official_eval_sharded_fast5/dev_public_bibtex_first_fallback/shards.
+hallmark_mlx_bibtex_first_fallback,executed_here,1119,False,0.9344262295081968,0.9633802816901409,0.9523110785033015,0.15555555555555556,Merged 8 shard directories from /Users/sebastianboehler/Documents/GitHub/hallmark-mlx/artifacts/official_eval_sharded_fast5_confirm/dev_public_bibtex_first_fallback/shards.
 bibtexupdater,upstream_published_result,1119,False,0.9082638362395754,0.9462875197472354,0.9363008442056792,0.17901234567901234,Published by upstream repo in bibtexupdater_dev_public.json.
 llm_tool_augmented,upstream_published_predictions,1119,False,0.8456014362657093,0.8177083333333334,0.8560885608856089,0.14439655172413793,Predictions JSONL shipped upstream; metrics recomputed locally.
 always_hallucinated,executed_here,1119,False,0.7226027397260274,1.0,0.8424124513618676,1.0,Generated 1119 predictions locally.

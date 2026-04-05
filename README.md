@@ -50,9 +50,7 @@ Bibliographic truth is not a stable latent fact stored inside a model. It is oft
 
 ## Why MLX on Apple Silicon
 
-The default local training path is MLX LoRA so experiments can be run directly on Apple Silicon machines without treating the Mac as a second-class environment. The code keeps MLX-specific logic behind a modular boundary so the project can later swap in a different fine-tuning backend if needed.
-
-The repository also supports a repo-native Weco frontier loop for budget-aware policy optimization without making Weco a hard dependency of the initial scaffold.
+The default local training path is MLX LoRA so experiments can be run directly on Apple Silicon machines without treating the Mac as a second-class environment. The code keeps MLX-specific logic behind a modular boundary so the project can later swap in a different fine-tuning backend if needed. The repository also supports a repo-native Weco frontier loop for budget-aware policy optimization without making Weco a hard dependency of the initial scaffold.
 
 ## Repository Scope
 
@@ -142,9 +140,7 @@ Training now defaults to `training.example_format: tool_transcript_steps`. The r
 - further assistant tool calls if needed,
 - and a final assistant decision JSON block.
 
-The tokenizer's chat template still owns role-formatting tokens. The repository uses the model-native `<tool_call>...</tool_call>` delimiters and keeps tool observations plus final decisions as compact JSON so the protocol remains explicit without inventing unsupported pseudo-special tokens.
-
-The default inference config in `configs/base.yaml` uses a deterministic `warm_start` policy backend. This is a bootstrapping path for seed-trace generation: it parses the input heuristically, proposes tool calls, runs the tool layer, and writes a structured trace you can review and later promote into training JSONL.
+The tokenizer's chat template still owns role-formatting tokens. The repository uses the model-native `<tool_call>...</tool_call>` delimiters and keeps tool observations plus final decisions as compact JSON so the protocol remains explicit without inventing unsupported pseudo-special tokens. The default inference config in `configs/base.yaml` uses a deterministic `warm_start` policy backend. This is a bootstrapping path for seed-trace generation: it parses the input heuristically, proposes tool calls, runs the tool layer, and writes a structured trace you can review and later promote into training JSONL.
 
 Example:
 
@@ -249,29 +245,21 @@ When benchmark keys are available, the adapter writes one JSON object per entry:
 
 For real HALLMARK evaluation, use the exact `entry.bibtex_key` from the benchmark loader. Deterministic hashes produced from local inputs are for local dry runs only.
 
-## Baseline Experimental Loop
-
-The repository is meant to support side-by-side comparisons between:
-
-- baseline prompting without tools,
-- prompting with external verification tools,
-- MLX LoRA fine-tuning on trace data,
-- and later Weco-guided prompt or adapter optimization.
-
 ## Benchmark Snapshot
 
-The public-facing benchmark artifacts in this repository use official HALLMARK splits only.
-Internal Weco model-selection splits remain in the codebase for optimization, but they are
-not presented as benchmark results.
-
-The current official benchmark artifacts are tracked in:
+The public-facing benchmark artifacts in this repository use official HALLMARK splits only. Internal Weco model-selection splits remain in the codebase for optimization, but they are not presented as benchmark results.
 
 - `docs/reports/hallmark_submission_readiness.md` for the public leaderboard snapshot
 - `docs/reports/hallmark_official_splits.md` for the official split-by-split report
+- `docs/figures/hallmark_official_vs_bibtexupdater.png` for the direct `hallmark-mlx` vs `BibTeX Updater` view, shown as relative improvement percentages
 
-![HALLMARK benchmark comparison](docs/figures/hallmark_submission_leaderboard.png)
+![hallmark-mlx vs BibTeX Updater](docs/figures/hallmark_official_vs_bibtexupdater.png)
 
 That comparison loop is intentionally explicit so benchmark gains can be traced to grounded tool use rather than memorized bibliographic answers.
+
+## Lab Book
+
+The repository now keeps a lightweight experiment journal in `.lab-book/`. Use it for dated notes on training changes, benchmark reruns, Weco settings, and promotion decisions so later reproduction and paper-writing do not depend on terminal history.
 
 ## Scientific Rigor
 
