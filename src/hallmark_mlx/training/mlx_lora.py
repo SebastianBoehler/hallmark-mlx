@@ -5,9 +5,9 @@ from __future__ import annotations
 import importlib.util
 import json
 import subprocess
+import sys
 from dataclasses import dataclass
 from pathlib import Path
-import sys
 
 from hallmark_mlx.config import AppConfig
 from hallmark_mlx.training.dataset_loader import prepare_training_dataset
@@ -73,7 +73,11 @@ def build_mlx_command(config: AppConfig, dataset_dir: Path) -> list[str]:
     )
 
 
-def build_training_manifest(config: AppConfig, dataset_dir: Path, command: list[str]) -> dict[str, object]:
+def build_training_manifest(
+    config: AppConfig,
+    dataset_dir: Path,
+    command: list[str],
+) -> dict[str, object]:
     """Build a reproducibility manifest for an MLX LoRA run."""
 
     return {
@@ -107,12 +111,15 @@ def plan_training_run(config: AppConfig) -> MLXLoRATrainPlan:
     """Prepare dataset artifacts and a train command."""
 
     output_root = ensure_dir(config.training.output_dir)
-    prepared_dataset_dir = ensure_dir(output_root / "prepared_dataset")
-    prepare_training_dataset(
-        config.paths.processed_dir,
-        prepared_dataset_dir,
-        example_format=config.training.example_format,
-    )
+    if config.training.prepared_dataset_dir is None:
+        prepared_dataset_dir = ensure_dir(output_root / "prepared_dataset")
+        prepare_training_dataset(
+            config.paths.processed_dir,
+            prepared_dataset_dir,
+            example_format=config.training.example_format,
+        )
+    else:
+        prepared_dataset_dir = config.training.prepared_dataset_dir
 
     ensure_dir(config.model.adapter_path.parent)
     command = build_mlx_command(config, prepared_dataset_dir)
@@ -130,7 +137,10 @@ def plan_training_run(config: AppConfig) -> MLXLoRATrainPlan:
                 "runner_script": "scripts/weco_run.py",
                 "trial_source": "weco_targets/hallmark_policy_trial.py",
                 "eval_script": "scripts/weco_eval.py",
-                "notes": "Use the repo-native Weco frontier loop instead of mutating MLX train commands directly.",
+                "notes": (
+                    "Use the repo-native Weco frontier loop instead of mutating "
+                    "MLX train commands directly."
+                ),
             },
         )
 

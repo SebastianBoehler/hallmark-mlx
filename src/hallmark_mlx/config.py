@@ -41,7 +41,8 @@ class ToolServiceConfig(BaseModel):
     timeout_seconds: float = 15.0
     rows: int = 5
     command: str | None = None
-    update_command: str | None = None  # explicit binary for update_bibtex; avoids fragile string replacement
+    # Explicit binary for update_bibtex; avoids fragile string replacement.
+    update_command: str | None = None
     email: str | None = None
 
 
@@ -69,7 +70,7 @@ class DatasetConfig(BaseModel):
     private_holdout_tag: str = "private_holdout"
 
     @model_validator(mode="after")
-    def validate_ratios(self) -> "DatasetConfig":
+    def validate_ratios(self) -> DatasetConfig:
         if self.valid_ratio + self.test_ratio >= 1:
             msg = "valid_ratio + test_ratio must be < 1."
             raise ValueError(msg)
@@ -81,6 +82,7 @@ class TrainingConfig(BaseModel):
 
     enabled: bool = True
     output_dir: Path = Path("artifacts/train")
+    prepared_dataset_dir: Path | None = None
     example_format: TrainingExampleFormat = TrainingExampleFormat.TOOL_TRANSCRIPT_STEPS
     python_executable: str = sys.executable
     fine_tune_type: str = "lora"
@@ -149,6 +151,8 @@ def load_config(path: str | Path) -> AppConfig:
     config.paths.predictions_path = _resolve(config.paths.predictions_path)
     config.model.adapter_path = _resolve(config.model.adapter_path)
     config.training.output_dir = _resolve(config.training.output_dir)
+    if config.training.prepared_dataset_dir is not None:
+        config.training.prepared_dataset_dir = _resolve(config.training.prepared_dataset_dir)
     config.eval.gold_path = _resolve(config.eval.gold_path)
     config.eval.output_path = _resolve(config.eval.output_path)
     config.weco.experiment_dir = _resolve(config.weco.experiment_dir)

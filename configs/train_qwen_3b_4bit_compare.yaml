@@ -1,0 +1,62 @@
+project_name: hallmark-mlx
+
+paths:
+  raw_trace_path: ../data/raw/traces.jsonl
+  processed_dir: ../data/processed
+  artifacts_dir: ../artifacts
+  predictions_path: ../artifacts/predictions.jsonl
+
+model:
+  backend: mlx
+  base_model: mlx-community/Qwen2.5-3B-Instruct-4bit
+  adapter_path: ../artifacts/adapters/qwen25_3b_4bit_compare
+  max_tokens: 512
+  temperature: 0.0
+  max_rollout_rounds: 5
+  system_prompt_version: v0
+  finalization_mode: deterministic
+  force_bibtex_updater_first: true
+
+tools:
+  crossref:
+    enabled: true
+    rows: 4
+  openalex:
+    enabled: true
+    rows: 2
+  dblp:
+    enabled: true
+    rows: 1
+  acl_anthology:
+    enabled: true
+  arxiv:
+    enabled: true
+    rows: 2
+  semantic_scholar:
+    enabled: true
+    rows: 5
+
+training:
+  enabled: true
+  output_dir: ../artifacts/train_qwen_3b_4bit_compare
+  prepared_dataset_dir: ../artifacts/weco/hallmark-qwen-train-frontier-iterative/61460529b25c/train/prepared_dataset
+  example_format: tool_transcript_steps
+  fine_tune_type: lora
+  optimizer: adamw
+  mask_prompt: true
+  num_layers: 14
+  learning_rate: 0.00014
+  batch_size: 1
+  num_iterations: 140
+  val_batches: 4
+  max_seq_length: 5120
+  grad_accumulation_steps: 6
+  save_every: 1000
+  eval_every: 20
+  report_every: 20
+  test_batches: -1
+  grad_checkpoint: true
+  seed: 7
+
+weco:
+  enabled: false

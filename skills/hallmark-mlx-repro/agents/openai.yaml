@@ -1,0 +1,4 @@
+interface:
+  display_name: "Hallmark MLX Repro"
+  short_description: "Reproduce training, evals, and benchmark reports"
+  default_prompt: "Use $hallmark-mlx-repro to reproduce training, tracked evals, official HALLMARK runs, or Hugging Face release bundles in this repo."
