@@ -8,9 +8,16 @@ version = "0.1.0"
 description = "Mac-native MLX scaffold for citation verification policy learning"
 readme = "README.md"
 requires-python = ">=3.11"
-license = { text = "MIT" }
+license = { file = "LICENSE" }
 authors = [
   { name = "Sebastian Boehler" }
+]
+keywords = [
+  "citation-verification",
+  "mlx",
+  "hallmark",
+  "tool-use",
+  "bibtex",
 ]
 dependencies = [
   "pydantic>=2.8,<3",
@@ -21,6 +28,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
   "matplotlib>=3.10,<4",
+  "pre-commit>=4,<5",
   "pytest>=8,<9",
   "pytest-cov>=5,<6",
   "ruff>=0.5,<1",
@@ -36,6 +44,11 @@ weco = [
 
 [project.scripts]
 hallmark-mlx = "hallmark_mlx.cli:app"
+
+[project.urls]
+Homepage = "https://github.com/SebastianBoehler/hallmark-mlx"
+Repository = "https://github.com/SebastianBoehler/hallmark-mlx"
+Issues = "https://github.com/SebastianBoehler/hallmark-mlx/issues"
 
 [tool.hatch.metadata]
 allow-direct-references = true
