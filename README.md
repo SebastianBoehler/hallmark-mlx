@@ -1,115 +1,86 @@
+<div align="center">
+
 # hallmark-mlx
 
-`hallmark-mlx` is a Mac-native research scaffold for training and evaluating small tool-using models that verify citations before answering. The project is designed around Apple Silicon, MLX LoRA fine-tuning, structured verification traces, and benchmark-oriented evaluation against citation hallucination tasks such as HALLMARK.
+Mac-native citation verification research on Apple Silicon with MLX, tool use, and official HALLMARK benchmarking.
 
-## Motivation
+[![CI](https://github.com/SebastianBoehler/hallmark-mlx/actions/workflows/ci.yml/badge.svg)](https://github.com/SebastianBoehler/hallmark-mlx/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](pyproject.toml)
 
-Citation errors are not just formatting problems. In research writing workflows they can silently become:
+</div>
 
-- fabricated references,
-- broken BibTeX entries,
-- unsupported claims,
-- preprints cited as if they were published versions,
-- or plausible but incorrect bibliographic metadata.
+`hallmark-mlx` is a research-oriented repository for building citation verification systems that use external scholarly tools before making a judgment. The project is optimized for Apple Silicon and MLX LoRA workflows, but the evaluation and reporting stack is general enough to support broader experimentation.
 
-This repository treats citation verification as a grounded decision problem rather than a memorization problem. The target behavior is not "know whether the citation is true from model weights." The target behavior is:
+## What It Does
 
-1. parse the input,
-2. identify ambiguity and likely failure modes,
-3. decide which verification actions to run,
-4. use external tools and APIs,
-5. compare candidate matches,
-6. abstain when evidence is insufficient,
-7. then emit a calibrated verification verdict.
+The repository is built around a simple idea: bibliographic truth should come from evidence, not from memorized model weights.
 
-## Research Framing
+Core capabilities:
 
-The central object in this project is a structured verification trace. Training data is expected to capture intermediate decisions such as suspected issues, proposed queries, chosen tools, summarized tool outputs, candidate rankings, and final decisions. This makes the project suitable for work on:
+- structured verification traces for training and debugging
+- tool wrappers for sources like BibTeX Updater, Crossref, OpenAlex, DBLP, ACL Anthology, arXiv, and Semantic Scholar
+- MLX LoRA training flows for small Qwen-based tool-using policies
+- deterministic controller and finalizer paths for benchmark-facing runs
+- official HALLMARK split runners and report generation
+- reproducible release bundles for datasets and LoRA adapters
 
-- tool-using policy learning,
-- citation hallucination detection,
-- abstention and confidence calibration,
-- benchmark contamination control,
-- reproducible comparison between prompting and fine-tuning,
-- and reliability-oriented research artifacts for academic writing pipelines.
+## Why This Exists
 
-## Why External Tools Matter
+Citation failures are not limited to formatting issues. In practice they include:
 
-Bibliographic truth is not a stable latent fact stored inside a model. It is often resolved by interacting with systems such as:
+- fabricated references
+- swapped or partial author lists
+- wrong or nonexistent venues
+- preprints cited as published papers
+- plausible-looking but incorrect metadata
 
-- BibTeX Updater,
-- Crossref,
-- OpenAlex,
-- DBLP,
-- ACL Anthology,
-- Semantic Scholar,
-- local bibliography files,
-- and benchmark-provided entry identifiers.
+This repository treats citation verification as a grounded decision problem:
 
-`hallmark-mlx` therefore separates the project into a policy layer, a tool-execution layer, and a finalization layer. The policy is responsible for deciding what to do next. The tools are responsible for evidence collection. The finalizer is responsible for conservative, evidence-aware verdict generation.
+1. parse the input
+2. decide which verification actions to run
+3. collect evidence from external tools
+4. compare candidate records
+5. abstain when needed
+6. emit a calibrated verdict
 
-## Why MLX on Apple Silicon
-
-The default local training path is MLX LoRA so experiments can be run directly on Apple Silicon machines without treating the Mac as a second-class environment. The code keeps MLX-specific logic behind a modular boundary so the project can later swap in a different fine-tuning backend if needed. The repository also supports a repo-native Weco frontier loop for budget-aware policy optimization without making Weco a hard dependency of the initial scaffold.
-
-## Repository Scope
-
-This scaffold includes:
-
-- a typed Python package under `src/hallmark_mlx/`,
-- schema models for trace-based verification,
-- a small CLI for dataset building, training, inference, evaluation, and BibTeX checking,
-- wrappers for BibTeX Updater, Crossref, OpenAlex, DBLP, ACL Anthology, and Semantic Scholar,
-- contamination-aware dataset utilities,
-- HALLMARK-style prediction serialization,
-- placeholder MLX LoRA planning hooks,
-- scripts for local Mac workflows,
-- and tests for the core trace and evaluation contracts.
-
-The scaffold does not yet include:
-
-- a production MLX decoder that emits verification traces from a model,
-- benchmark-specific data loaders for the full HALLMARK release,
-- or a finished training corpus.
-
-Those are intentional next implementation steps rather than hidden mocks.
-
-## Project Layout
+## Project Structure
 
 ```text
 hallmark-mlx/
 ├── configs/
 ├── docs/
 ├── scripts/
+├── skills/
 ├── src/hallmark_mlx/
-│   ├── data/
 │   ├── eval/
 │   ├── inference/
+│   ├── release/
 │   ├── tools/
-│   ├── training/
-│   └── utils/
-└── tests/
+│   └── training/
+├── tests/
+└── .lab-book/
 ```
 
 ## Installation
 
-### Recommended
+Recommended:
+
 ```bash
 uv sync --extra dev --extra mlx --extra weco
+uv run pre-commit install
 ```
 
-### Minimal
+If you are not on Apple Silicon, skip the `mlx` extra:
+
 ```bash
-python -m pip install -e ".[dev]"
+uv sync --extra dev --extra weco
+uv run pre-commit install
 ```
-
-### Mac Notes
-
-The repository is structured for Apple Silicon first. `scripts/setup_mac.sh` installs the local tooling expected for MLX-oriented experimentation with Qwen checkpoints. Budget-aware Weco optimization is documented in `docs/weco.md`.
 
 ## Quick Start
 
-Build a contamination-aware trace dataset:
+Build a trace dataset:
 
 ```bash
 hallmark-mlx build-dataset \
@@ -124,177 +95,102 @@ Run the BibTeX checker wrapper:
 hallmark-mlx check-bib references.bib --strict
 ```
 
-Plan or launch an MLX LoRA run:
+Train the canonical kept 1.5B policy:
 
 ```bash
-hallmark-mlx train --config configs/train_qwen_1_5b.yaml
+hallmark-mlx train --config configs/train_qwen_1_5b_kept.yaml
 ```
 
-The default training config now uses `Qwen/Qwen2.5-1.5B-Instruct`. An alternate larger baseline remains available in `configs/train_qwen_3b.yaml`.
-
-Training now defaults to `training.example_format: tool_transcript_steps`. The raw reviewed corpus still stores full chains, but the trainer explodes each full chain into stepwise supervision targets so the model sees:
-
-- user task input,
-- assistant tool call,
-- tool observation JSON,
-- further assistant tool calls if needed,
-- and a final assistant decision JSON block.
-
-The tokenizer's chat template still owns role-formatting tokens. The repository uses the model-native `<tool_call>...</tool_call>` delimiters and keeps tool observations plus final decisions as compact JSON so the protocol remains explicit without inventing unsupported pseudo-special tokens. The default inference config in `configs/base.yaml` uses a deterministic `warm_start` policy backend. This is a bootstrapping path for seed-trace generation: it parses the input heuristically, proposes tool calls, runs the tool layer, and writes a structured trace you can review and later promote into training JSONL.
-
-Example:
+Run a tracked internal policy eval:
 
 ```bash
-hallmark-mlx infer \
-  --config configs/base.yaml \
-  --raw-input "Vaswani et al. Attention Is All You Need. NeurIPS 2017." \
-  --output-path artifacts/examples/attention_trace.json
+hallmark-mlx eval-policy \
+  --config configs/train_qwen_1_5b_kept.yaml \
+  --input-path data/weco/hallmark_dev_compare32_gold_traces.jsonl \
+  --output-path artifacts/confirm_qwen_kept_compare32_metrics.json
 ```
 
-Those saved traces are intended to become curated supervision targets, not unreviewed auto-labels.
+## Benchmarking
 
-For batch bootstrapping from a JSONL file of `VerificationInput` records:
+Public benchmark claims in this repository are based on official HALLMARK splits only:
 
-```bash
-hallmark-mlx bootstrap-traces \
-  --config configs/base.yaml \
-  --input-path data/raw/verification_inputs.jsonl \
-  --output-path data/raw/seed_traces.jsonl
-```
+- `dev_public`
+- `test_public`
+- `stress_test`
 
-Format predictions for HALLMARK-style evaluation:
+Internal Weco splits such as `search64` and `compare32` remain in the codebase for model selection, but they are not presented as public benchmark results.
 
-```bash
-hallmark-mlx eval \
-  --config configs/eval_hallmark.yaml \
-  --predictions artifacts/predictions.jsonl \
-  --gold data/hallmark/dev_public.jsonl
-```
+Key benchmark artifacts:
 
-## Example Training Trace JSON
-
-This repository is organized around traces like the following:
-
-```json
-{
-  "policy_version": "v0",
-  "input": {
-    "record_id": "trace-001",
-    "input_type": "raw_citation_string",
-    "raw_input": "Vaswani et al. Attention Is All You Need. NeurIPS 2017."
-  },
-  "parsed_fields": {
-    "title": "Attention Is All You Need",
-    "authors": ["Ashish Vaswani", "Noam Shazeer"],
-    "year": 2017,
-    "venue": "NeurIPS"
-  },
-  "suspected_issues": [
-    {
-      "code": "missing_doi",
-      "rationale": "No DOI is available in the raw citation string."
-    }
-  ],
-  "proposed_query": {
-    "query": "Attention Is All You Need Vaswani 2017 NeurIPS",
-    "purpose": "resolve_canonical_record"
-  },
-  "next_action": "query_crossref",
-  "tool_calls": [
-    {
-      "tool": "crossref",
-      "action": "search_works",
-      "arguments": {
-        "query": "Attention Is All You Need Vaswani 2017 NeurIPS",
-        "rows": 5
-      }
-    }
-  ],
-  "final_decision": {
-    "verdict": "verified",
-    "confidence": 0.92,
-    "rationale": "Crossref returned the expected title, author list, year, and DOI."
-  }
-}
-```
-
-## Example Inference Output
-
-The inference boundary expects a structured result, not only a label:
-
-```json
-{
-  "verdict": "abstain",
-  "confidence": 0.41,
-  "rationale": "Candidate metadata conflicts across sources.",
-  "abstain_reason": "ambiguous_candidate_set",
-  "tool_consensus": {
-    "supporting_tools": ["crossref", "openalex"],
-    "conflicting_tools": ["semantic_scholar"]
-  }
-}
-```
-
-## Example HALLMARK Prediction JSONL Line
-
-When benchmark keys are available, the adapter writes one JSON object per entry:
-
-```json
-{"bibtex_key":"a3f9c2b1d4e76f85","label":"HALLUCINATED","confidence":0.87,"reason":"DOI does not resolve and no matching published record was found.","subtest_results":{"doi_resolves":false},"api_sources_queried":["crossref","semantic_scholar"],"wall_clock_seconds":1.2,"api_calls":3}
-```
-
-For real HALLMARK evaluation, use the exact `entry.bibtex_key` from the benchmark loader. Deterministic hashes produced from local inputs are for local dry runs only.
-
-## Benchmark Snapshot
-
-The public-facing benchmark artifacts in this repository use official HALLMARK splits only. Internal Weco model-selection splits remain in the codebase for optimization, but they are not presented as benchmark results.
-
-- `docs/reports/hallmark_submission_readiness.md` for the public leaderboard snapshot
-- `docs/reports/hallmark_official_splits.md` for the official split-by-split report
-- `docs/figures/hallmark_official_vs_bibtexupdater.png` for the direct `hallmark-mlx` vs `BibTeX Updater` view, shown as relative improvement percentages
+- [docs/reports/hallmark_official_splits.md](docs/reports/hallmark_official_splits.md)
+- [docs/reports/hallmark_submission_readiness.md](docs/reports/hallmark_submission_readiness.md)
+- [docs/figures/hallmark_official_vs_bibtexupdater.png](docs/figures/hallmark_official_vs_bibtexupdater.png)
 
 ![hallmark-mlx vs BibTeX Updater](docs/figures/hallmark_official_vs_bibtexupdater.png)
 
-That comparison loop is intentionally explicit so benchmark gains can be traced to grounded tool use rather than memorized bibliographic answers.
+## Reproducibility
 
-## Lab Book
+The repository includes a repo-local skill for other coding agents:
 
-The repository now keeps a lightweight experiment journal in `.lab-book/`. Use it for dated notes on training changes, benchmark reruns, Weco settings, and promotion decisions so later reproduction and paper-writing do not depend on terminal history.
+- [skills/hallmark-mlx-repro/SKILL.md](skills/hallmark-mlx-repro/SKILL.md)
 
-## Scientific Rigor
+Use it to:
 
-The data utilities and docs explicitly address:
+- rerun kept training configs
+- compare the 1.5B and 3B 4-bit Mac-viable models
+- refresh confirmed benchmark reports and figures
+- prepare Hugging Face release bundles
 
-- DOI and citation-family grouping,
-- train/valid/test separation by citation family,
-- private holdout handling,
-- contamination checks against benchmark entries,
-- keeping benchmark labels distinct from retrieval evidence,
-- and avoiding evaluation shortcuts such as title leakage.
+The project also keeps a lightweight lab book:
 
-## Roadmap
+- [.lab-book/README.md](.lab-book/README.md)
 
-Near-term priorities:
+Use it for dated notes on experiments, benchmark reruns, Weco settings, and promotion decisions.
 
-- implement the MLX trace decoder boundary,
-- connect real training data ingestion,
-- add benchmark-specific importers for HALLMARK,
-- tighten BibTeX correction logic around BibTeX Updater reports,
-- and calibrate abstention behavior under ambiguous evidence.
+## Release Artifacts
 
-## Limitations
+HF-ready dataset and model bundles can be prepared with:
 
-- The MLX training adapter launches the real `python -m mlx_lm lora ...` CLI, but successful runs still depend on realistic dataset size and strict protocol supervision.
-- The inference runner requires a real policy backend that emits structured traces. No synthetic fallback policy is shipped.
-- Public API wrappers are minimal and focused on normalization, not exhaustive service coverage.
-- HALLMARK compatibility is format-level in this scaffold; benchmark data ingestion and leaderboard replication remain follow-on work.
+```bash
+uv run python scripts/prepare_hf_release.py
+```
 
-## Related Work and Dependencies
+The current release bundle root is:
 
-- [rpatrik96/hallmark](https://github.com/rpatrik96/hallmark)
-- [rpatrik96/bibtexupdater](https://github.com/rpatrik96/bibtexupdater)
-- [ml-explore/mlx-lm](https://github.com/ml-explore/mlx-lm)
+- `artifacts/hf_release/qwen25_1_5b_kept`
+
+## Development
+
+Lint and test:
+
+```bash
+uv run ruff check .
+uv run pytest
+```
+
+Refresh benchmark reports from the confirmed official reruns:
+
+```bash
+PYTHONPATH=src uv run python scripts/refresh_confirmed_benchmarks.py
+```
+
+Pre-commit currently runs:
+
+- `ruff check --fix`
+- `ruff format`
+- trailing whitespace cleanup
+- end-of-file normalization
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, style, benchmark rules, and PR expectations.
+
+## Related Projects
+
+- [HALLMARK](https://github.com/rpatrik96/hallmark)
+- [BibTeX Updater](https://github.com/rpatrik96/bibtexupdater)
+- [mlx-lm](https://github.com/ml-explore/mlx-lm)
 
 ## License
 
-This scaffold is prepared as an open-source research engineering repository. Add or update the project license before publication if your distribution requirements differ.
+This project is released under the [MIT License](LICENSE).
