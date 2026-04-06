@@ -92,6 +92,7 @@ def main() -> None:
     if not args.skip_export:
         _run_export("export_official_split_report.py")
         _run_export("export_submission_readiness.py")
+        _run_export("export_submission_packet.py")
         _run_export("plot_benchmark_comparison.py")
         _run_export("export_benchmark_table.py")
 
