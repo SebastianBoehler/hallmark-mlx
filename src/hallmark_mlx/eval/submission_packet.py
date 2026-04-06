@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[3]
 CONFIRM_ROOT = ROOT / "artifacts" / "official_eval_sharded_fast5_confirm"
 SUBMISSION_ROOT = ROOT / "artifacts" / "submission" / "hallmark"
 OFFICIAL_SPLITS = ("dev_public", "test_public", "stress_test")
+SUBMISSION_SKILL = "paper-references"
 EXPECTED_NUM_ENTRIES = {
     "dev_public": 1119,
     "test_public": 831,
@@ -143,7 +144,7 @@ def build_submission_entry(
     metrics = build_metrics(row)
     entry = {
         "benchmark-id": "hallmark",
-        "skill": "hallmark-mlx",
+        "skill": SUBMISSION_SKILL,
         "model": "hybrid-controller",
         "version": version,
         "date": date,

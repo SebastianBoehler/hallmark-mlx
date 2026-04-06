@@ -1,7 +1,7 @@
 # HALLMARK Submission Packet
 
 - Packet directory: `/Users/sebastianboehler/Documents/GitHub/hallmark-mlx/artifacts/submission/hallmark/current`
-- Version: `c5dbe5d21199b408a43889865e3a6ce8132495ba` (clean commit)
+- Version: `6eb2ff6433547aae02931b4ecd708d18160b6cf3-dirty` (dirty worktree)
 - Primary public submission row: `/Users/sebastianboehler/Documents/GitHub/hallmark-mlx/artifacts/official_eval_sharded_fast5_confirm/test_public_bibtex_first_fallback/merged/row.json`
 
 ## Official Rows
