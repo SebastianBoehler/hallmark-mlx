@@ -1,7 +1,7 @@
 # HALLMARK Submission Packet
 
 - Packet directory: `/Users/sebastianboehler/Documents/GitHub/hallmark-mlx/artifacts/submission/hallmark/current`
-- Version: `683a60e9a46796166b83511c5a9f1521d8d36a71` (clean commit)
+- Version: `33a10b4a10052a2bee9b9e9769918a533c9c705d` (clean commit)
 - Primary public submission row: `/Users/sebastianboehler/Documents/GitHub/hallmark-mlx/artifacts/official_eval_sharded_fast5_confirm/test_public_bibtex_first_fallback/merged/row.json`
 
 ## Official Rows
@@ -21,3 +21,4 @@
 - Use `test_public` as the public row in submission notes.
 - Keep `dev_public` and `stress_test` as supporting context only.
 - Ask the maintainers to evaluate the same commit on the hidden split.
+- Default upstream benchmark root in examples: `/tmp/hallmark-upstream`.
