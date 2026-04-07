@@ -14,6 +14,7 @@ CONFIRM_ROOT = ROOT / "artifacts" / "official_eval_sharded_fast5_confirm"
 SUBMISSION_ROOT = ROOT / "artifacts" / "submission" / "hallmark"
 OFFICIAL_SPLITS = ("dev_public", "test_public", "stress_test")
 SUBMISSION_SKILL = "paper-references"
+DEFAULT_UPSTREAM_ROOT = "/tmp/hallmark-upstream"
 EXPECTED_NUM_ENTRIES = {
     "dev_public": 1119,
     "test_public": 831,
@@ -128,6 +129,35 @@ def shard_plan(num_entries: int, *, shards: int = 8) -> list[tuple[int, int, int
         limit = min(chunk, num_entries - offset)
         plan.append((shard, offset, limit))
     return plan
+
+
+def wrapper_reproduction_command(split: str, *, target: str = "controller") -> str:
+    """Return the simplest public rerun command for one official split."""
+
+    return (
+        "uv run python scripts/run_submission_eval.py "
+        f"--upstream-root {DEFAULT_UPSTREAM_ROOT} "
+        f"--split {split} "
+        f"--target {target} "
+        f"--output-dir artifacts/submission_eval/{split}_{target}"
+    )
+
+
+def summary_line(split: str, row: dict[str, object]) -> str:
+    """Format one compact split summary line for reports."""
+
+    return (
+        f"- `{split}`: DR {float(row['detection_rate']):.3f}, "
+        f"F1-H {float(row['f1_hallucination']):.3f}, "
+        f"TW-F1 {float(row['tier_weighted_f1']):.3f}, "
+        f"FPR "
+        + (
+            "—"
+            if row.get("false_positive_rate") is None
+            else f"{float(row['false_positive_rate']):.3f}"
+        )
+        + f", ECE {float(row['ece']):.3f}"
+    )
 
 
 def build_submission_entry(

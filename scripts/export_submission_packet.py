@@ -9,6 +9,7 @@ from datetime import date
 from pathlib import Path
 
 from hallmark_mlx.eval.submission_packet import (
+    DEFAULT_UPSTREAM_ROOT,
     OFFICIAL_SPLITS,
     ROOT,
     SUBMISSION_ROOT,
@@ -17,7 +18,9 @@ from hallmark_mlx.eval.submission_packet import (
     confirmed_split_paths,
     load_confirmed_outputs,
     shard_plan,
+    summary_line,
     validate_confirmed_row,
+    wrapper_reproduction_command,
 )
 from hallmark_mlx.utils.io import ensure_dir, write_json, write_text
 from hallmark_mlx.utils.jsonl import write_jsonl
@@ -45,10 +48,6 @@ def _git_version() -> tuple[str, bool]:
     commit = _run_git("rev-parse", "HEAD")
     dirty = bool(_run_git("status", "--porcelain"))
     return (f"{commit}-dirty" if dirty else commit), dirty
-
-
-def _quoted(path: Path) -> str:
-    return str(path).replace(" ", "\\ ")
 
 
 def _repro_script(split: str, *, output_dir: Path) -> str:
@@ -103,22 +102,7 @@ def _repro_script(split: str, *, output_dir: Path) -> str:
     script_path = output_dir / f"reproduce_{split}.sh"
     write_text(script_path, "\n".join(lines))
     script_path.chmod(0o755)
-    return f"bash {_quoted(script_path)}"
-
-
-def _summary_line(split: str, row: dict[str, object]) -> str:
-    return (
-        f"- `{split}`: DR {float(row['detection_rate']):.3f}, "
-        f"F1-H {float(row['f1_hallucination']):.3f}, "
-        f"TW-F1 {float(row['tier_weighted_f1']):.3f}, "
-        f"FPR "
-        + (
-            "—"
-            if row.get("false_positive_rate") is None
-            else f"{float(row['false_positive_rate']):.3f}"
-        )
-        + f", ECE {float(row['ece']):.3f}"
-    )
+    return str(script_path)
 
 
 def _maintainer_message(
@@ -147,12 +131,12 @@ def _maintainer_message(
             "",
             "## Primary Public Row",
             "",
-            _summary_line("test_public", rows["test_public"]),
+            summary_line("test_public", rows["test_public"]),
             "",
             "## Supporting Official Rows",
             "",
-            _summary_line("dev_public", rows["dev_public"]),
-            _summary_line("stress_test", rows["stress_test"]),
+            summary_line("dev_public", rows["dev_public"]),
+            summary_line("stress_test", rows["stress_test"]),
             "",
             "## System",
             "",
@@ -180,6 +164,12 @@ def _maintainer_message(
                 "The attached public row for leaderboard comparison is `test_public`; "
                 "`dev_public` and `stress_test` are included as supporting context only."
             ),
+            "",
+            "## One-Command Reproduction",
+            "",
+            "```bash",
+            wrapper_reproduction_command("test_public"),
+            "```",
             "",
             "## Included Files",
             "",
@@ -212,7 +202,7 @@ def _report(
             "",
             "## Official Rows",
             "",
-            *[_summary_line(split, rows[split]) for split in OFFICIAL_SPLITS],
+            *[summary_line(split, rows[split]) for split in OFFICIAL_SPLITS],
             "",
             "## Included Artifacts",
             "",
@@ -225,6 +215,7 @@ def _report(
             "- Use `test_public` as the public row in submission notes.",
             "- Keep `dev_public` and `stress_test` as supporting context only.",
             "- Ask the maintainers to evaluate the same commit on the hidden split.",
+            f"- Default upstream benchmark root in examples: `{DEFAULT_UPSTREAM_ROOT}`.",
             "",
         ]
     )
@@ -246,7 +237,7 @@ def main() -> None:
         row, result = load_confirmed_outputs(split)
         checks_by_split[split] = validate_confirmed_row(row)
         rows[split] = row
-        reproduction = _repro_script(split, output_dir=output_dir)
+        _repro_script(split, output_dir=output_dir)
         entries.append(
             build_submission_entry(
                 split=split,
@@ -254,7 +245,7 @@ def main() -> None:
                 result=result,
                 version=version,
                 date=export_date,
-                reproduction=reproduction,
+                reproduction=wrapper_reproduction_command(split),
             )
         )
 
