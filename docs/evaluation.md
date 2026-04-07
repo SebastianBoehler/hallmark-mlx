@@ -59,6 +59,35 @@ The output directory is resumable and traceable:
 Re-running the same command resumes from existing entry checkpoints. Use `--limit N` for a
 partial smoke run that still uses the official evaluator on the first `N` official entries.
 
+## 4. One-Command Submission Eval
+
+For benchmark handoff, prefer the wrapper script:
+
+```bash
+uv run python scripts/run_submission_eval.py \
+  --upstream-root /tmp/hallmark-upstream \
+  --split test_public \
+  --target controller \
+  --output-dir artifacts/submission_eval/test_public_controller
+```
+
+That reproduces the actual submission-style controller row with the default 8-way sharding and
+official merge/rescoring step.
+
+To benchmark the published HF LoRA adapter instead, switch the target:
+
+```bash
+uv run python scripts/run_submission_eval.py \
+  --upstream-root /tmp/hallmark-upstream \
+  --split test_public \
+  --target hf_policy \
+  --hf-model-repo sebastianboehler/hallmark-mlx-qwen25-1.5b-lora \
+  --output-dir artifacts/submission_eval/test_public_hf_policy
+```
+
+The HF-backed path resolves `adapters.safetensors` from the model repo, infers the base model
+from the published manifest, and then runs the same official benchmark pipeline locally.
+
 ## Benchmark Hygiene
 
 To avoid overfitting or leakage:
